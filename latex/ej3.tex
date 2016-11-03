@@ -1,3 +1,177 @@
 \section{Ejercicio 3}
 
 Peso asignado: X.
+
+\subsection{Problema}
+
+En este problema nos dan una situación en la que cada docente tiene un sueldo, que es un entero positivo, determinado por la suma de
+todos los cargos inferiores y el mismo y a su vez por todas las antigüedades menores y la misma. De esa manera, nos piden encontrar
+la diferencia de sueldo entre el cargo actual y un cargo futuro.
+
+Como entrada recibimos los enteros $C$ (cantidad de cargos), $A$ (niveles de antigüedad), $Q$ (cantidad de queries), una matriz $M$
+de tamaño $C \times A$ y las Q queries con formato $<c_1, a_1, c_2, a_2>$.
+
+A partir de esto se define el sueldo de un docente con cargo $c$ y antigüedad $a$ como:
+
+\begin{equation*}
+\begin{split}
+    S_{c,a} & = \sum_{i=1}^{c}{\sum_{j=1}^{a}{M_{i,j}}} \\
+    		& = M_{c,a} + \sum_{i=1}^{c-1}{\sum_{j=1}^{a}{M_{i,j}}} + 
+    		\sum_{i=1}^{c}{\sum_{j=1}^{a-1}{M_{i,j}}} - 
+    		\sum_{i=1}^{c-1}{\sum_{j=1}^{a-1}{M_{i,j}}} \\
+    		& = M_{c,a} + S_{c-1,a} + S_{c,a-1} - S_{c-1,a-1}
+\end{split}
+\end{equation*}
+
+Mediante esta información, vamos a calcular el resultado de cada query $<c_1, a_1, c_2, a_2>$ como:
+
+\begin{equation*}
+\begin{split}
+    Q_{c_1,a_1,c_2,a_2} & = \sum_{i=c_1+1}^{c_2}{\sum_{j=a_1+1}^{a_2}{M_{i,j}}} \\
+    					& = \sum_{i=c_1+1}^{c_2}{(\sum_{j=1}^{a_2}{M_{i,j}} - \sum_{j=1}^{a_1}{M_{i,j}})} \\
+    					& = \sum_{i=c_1+1}^{c_2}{\sum_{j=1}^{a_2}{M_{i,j}}} - \sum_{i=c_1+1}^{c_2}{\sum_{j=1}^{a_1}{M_{i,j}}} \\
+    					& = \sum_{i=1}^{c_2}{\sum_{j=1}^{a_2}{M_{i,j}}} - \sum_{i=1}^{c_1}{\sum_{j=1}^{a_2}{M_{i,j}}} -
+    					\sum_{i=1}^{c_2}{\sum_{j=1}^{a_1}{M_{i,j}}} + \sum_{i=1}^{c_1}{\sum_{j=1}^{a_1}{M_{i,j}}} \\
+    					& = S_{c_2,a_2} - S_{c_1,a_2} - S_{c_2,a_1} + S_{c_1,a_1}
+\end{split}
+\end{equation*}
+
+\subsection{Algoritmo}
+
+\subsubsection*{Explicación y correctitud}
+
+El algoritmo consiste en dos partes: encontrar $S_{c,a}$ para cada valor posible y $Q_{c_1,a_1,c_2,a_2}$
+para cada query.
+
+Para hacer esto vamos a modelar $S$ como una matriz que completaremos al principio del 
+algoritmo con tal de tenerla calculada para cada query. Cada query $Q_{c_1,a_1,c_2,a_2}$ a su vez, sera calculada
+a partir de los valores de $S$.
+
+Como se puede ver en las ecuaciones anteriores, calcular cada $S_{c,a}$ se puede hacer fácilmente a partir de los valores adyacentes
+en la matriz. Es esencialmente un problema de programación dinámica.
+
+Y las ecuaciones mismas garantizan la correctitud del algoritmo.
+
+$Observaci\acute{o}n: $ la idea parte de implementar una Tabla Aditiva Bidimencional $S$ para $M_{i,j}$ y calcular las queries a partir
+de los `cuadrados de suma' que esta genera.
+
+\subsubsection*{Pseudocodigo}
+
+\begin{algorithm}[H]
+    \caption{CalcularDiferenciaSueldos}
+    \Input{Enteros $C$, $A$, $Q$, Matriz de enteros $M$ de tamaño $C \times A$, Conjunto de queries $queries$ de tamaño $Q$}
+    Matriz de enteros $S \gets$ Matriz de enteros de tamaño $C \times A$ rellena de 0 \;
+    $S_{0,0} \gets M_{0,0}$ \;
+    \For {Entero $i \gets 1$ ; $i < C$; $i \gets i + 1$} {
+    	$S_{i, 0} \gets S_{i-1, 0} + M_{i, 0}$
+    }
+    \For {Entero $i \gets 1$ ; $i < A$; $i \gets i + 1$} {
+    	$S_{0, i} \gets S_{0, i-1} + M_{0, i}$
+    }
+    \For {Entero $i \gets 1$ ; $i < C$; $i \gets i + 1$} {
+        \For {Entero $j \gets 1$ ; $j < A$; $j \gets j + 1$} {
+            $S_{i,j} = M_{i,j} + S_{i-1,j} + S_{i,j-1} - S_{i-1,j-1}$
+        }
+    }
+    \For {cada query $<c_1, a_1, c_2, a_2>$ en $queries$} {
+    	Entero $solucion \gets S_{c_2,a_2} - S_{c_1,a_2} - S_{c_2,a_1} + S_{c_1,a_1}$ \;
+        Imprimir solucion
+    }
+\end{algorithm}
+
+\subsection{Complejidad}
+
+El algoritmo:
+\begin{itemize}
+	\item Crea una matriz de tamaño $C \times A$, $O(C \times A)$.
+	\item Hace una asignación, $O(1)$.
+	\item Realiza tres ciclos for con asignaciones, sumas, restas y comparaciones para calcular la matriz $S$. El primero 
+	recorre $C-1$ valores de $i$ (trabajo $O(C)$). El segundo recorre $A-1$ valores de $i$ (trabajo $O(A)$). El 
+	tercero recorre $C-1$ valores de $i$ y dentro, $A-1$ valores de $j$ (trabajo $O(C \times N)$). En total los
+	ciclos tienen una complejidad de $O(C + A + C \times A) = O(C \times A)$.
+	\item Hace Un ultimo ciclo For para resolver las queries. Para cada una de las $Q$ queries calcula la solución en
+	base a sumas y restas de valores ya definidos. Como son operaciones constantes, la complejidad total del ciclo es $O(Q)$.
+\end{itemize}
+
+Por lo tanto, la complejidad total es de $O(C \times A + 1 + C \times A + Q) = O(C \times A + Q)$.
+
+\subsection{Casos de prueba}
+
+\subsubsection*{Caso 1}
+
+Probamos que funcione el algoritmo para el caso provisto por la cátedra.
+
+\begin{center}
+    \begin{tabular}{| l | l |}
+    \hline
+    Entrada del ejemplo 1 & Salida del ejemplo 1  \\ \hline
+    5 5 4 & 24 \\
+	1 2 3 4 5 & 0 \\
+	2 3 4 5 6 & 96 \\
+	3 4 5 6 7 & 20 \\
+	4 5 6 7 8 & \\
+	5 6 7 8 9 & \\
+	2 2 4 4  & \\
+	3 3 3 5  & \\
+	1 1 5 5  & \\
+	1 2 3 4  & \\
+	\hline
+    \end{tabular}
+\end{center}
+
+\subsubsection*{Caso 2}
+
+Probamos que funcione el algoritmo para un caso mediano donde sea fácil de chequear si la respuesta es correcta.
+
+\begin{center}
+    \begin{tabular}{| l | l |}
+    \hline
+    Entrada del ejemplo 2 & Salida del ejemplo 2  \\ \hline
+	10 10 5 & 0 \\
+	1 1 1 1 1 1 1 1 1 1 & 0 \\
+	1 1 1 1 1 1 1 1 1 1 & 0 \\
+	1 1 1 1 1 1 1 1 1 1 & 0 \\
+	1 1 1 1 1 1 1 1 1 1 & 81 \\
+	1 1 1 1 1 1 1 1 1 1 & \\
+	1 1 1 1 1 1 1 1 1 1 & \\
+	1 1 1 1 1 1 1 1 1 1 & \\
+	1 1 1 1 1 1 1 1 1 1 & \\
+	1 1 1 1 1 1 1 1 1 1 & \\
+	1 1 1 1 1 1 1 1 1 1 & \\
+	1 1 1 5 & \\
+	1 1 1 10 & \\
+	1 1 5 1 & \\
+	1 1 10 1 & \\
+	1 1 10 10 & \\
+	\hline
+    \end{tabular}
+\end{center}
+
+\subsubsection*{Caso 3}
+
+Probamos que funcione el algoritmo y corra en un tiempo lógico para un input del mayor tamaño posible.
+
+\begin{center}
+    \begin{tabular}{| l | l |}
+    \hline
+    Entrada del ejemplo 3 & Salida del ejemplo 3  \\ \hline
+	1000 100 100000 & 0 \\
+	1 2 3 4 ... 100 & 0 \\
+	2 3 4 5 ... 101 & 0 \\
+	3 4 5 6 ... 102 & 0 \\
+	... & 0 \\
+	... & 0 \\
+	1000 1001 1002 1003 ... 1099 & 0 \\
+	1 1 1 1 & 0 \\
+	1 1 1 2 & 0 \\
+	1 1 1 3 & 0 \\
+	... & \\
+	... & \\
+	1 1 1 100 & 0 \\
+	1 1 2 1 & 0 \\
+	... & \\
+	... & \\
+	1 1 1000 100 & 54494451 \\
+	\hline
+    \end{tabular}
+\end{center}
