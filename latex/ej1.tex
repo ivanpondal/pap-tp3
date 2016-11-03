@@ -58,10 +58,10 @@ Damos el algoritmo \textit{BordesDePrefijos} que, dado un string no-vacío de en
 
 \begin{algorithm}[H]
 	\caption{BordesDePrefijos}
-	\Input{ $S$: string no vacío }
-	\Output{ $T$: diccionario $\langle \mathbb{N} , \mathbb{N} \rangle$ }
+	\Input{ string $S$ no vacío }
+	\Output{ diccionario $T$ de naturales en naturales }
 
-	$T \gets$ diccionario $\langle \mathbb{N} , \mathbb{N} \rangle$ de tamaño $|S|+1$ \\
+	$T \gets$ inicializar con tamaño $|S|+1$ \\
 	$T [0] \gets -1$ \\
 	$T [1] \gets 0$ \\
 	$k \gets 0$ \\
