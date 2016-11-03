@@ -22,12 +22,13 @@ vector<int> prefix_border_lengths(const string& s) {
     int k = 0;
 
     while (j < s.size()+1) {
-        while (k > -1 && s[j-1] != s[k]) {
+        if (k > -1 && s[j-1] != s[k]) {
             k = T[k];
+        } else {
+            k++;
+            T[j] = k;
+            j++;
         }
-        k++;
-        T[j] = k;
-        j++;
     }
     return T;
 }
