@@ -39,8 +39,11 @@ bool substring(const string& t, const string& s) {
     string ts = t + s;
     vector<int> pbl = prefix_border_lengths(ts);
 
-    for (size_t i = 0; i < pbl.size(); ++i) {
-        if (pbl[i] >= m) {
+    // start at 2*m to avoid crossing-borders. 
+    // given a prefix of ts of size <2*m, any of its borders of size >=m will be crossing-borders
+    // cout << "pbl " << pbl << endl;
+    for (size_t i = 2*m; i < pbl.size(); ++i) {
+        if (pbl[i] == m) {
             return true;
         }
     }
