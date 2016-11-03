@@ -25,7 +25,8 @@ void run_unit_tests() {
 		{"ritmo" ,"Algoritmo", true},
 		{"holmund", "holamundo", false},
 		{"tato", "potato", true},
-		{"potato", "potato", true}
+		{"potato", "potato", true},
+		{"aba", "babc", false}, // caso en el que aba+babc tiene el prefijo ababa que tiene un borde igual que |aba| pero es cruzado
 	};
 
 	cout << "prefix border lengths tests:" << endl;
