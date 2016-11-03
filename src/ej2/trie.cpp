@@ -27,6 +27,13 @@ public:
 			hijos[s[pos]] = new Trie(s,pos+1);
 		}
 	}
+	~Trie() {
+		for(int i = 0; i < 256; i++) {
+			if(hijos[i] != NULL){
+				delete hijos[i];
+			}
+		}
+	}
 	void insert(string &s, int pos = 0) {
 		apariciones++;
 		if(pos == s.size()) {
@@ -37,32 +44,32 @@ public:
 			hijos[s[pos]]->insert(s,pos+1);
 		}
 	}
-	int find(string &s, int pos = 0) {
+	int aparitions(string &s, int pos = 0) {
 		if(pos == s.size()) {
 			return apariciones;
 		} else if(hijos[s[pos]] == NULL) {
 			return 0;
 		} else {
-			return hijos[s[pos]]->find(s,pos+1);
+			return hijos[s[pos]]->aparitions(s,pos+1);
 		}
 	}
 };
 
-int main() {
-	int n;
-	cin >> n;
-	Trie t;
-	char c;
-	string s;
-	for(int i=0;i<n;i++) {
-		cin >> c >> s;
-		if(c == 'i') {
-			//insertar
-			t.insert(s);
-		} else {
-			//buscar
-			int f = t.find(s);
-			cout << f << endl;
-		}
-	}
-}
+// int main() {
+// 	int n;
+// 	cin >> n;
+// 	Trie t;
+// 	char c;
+// 	string s;
+// 	for(int i=0;i<n;i++) {
+// 		cin >> c >> s;
+// 		if(c == 'i') {
+// 			//insertar
+// 			t.insert(s);
+// 		} else {
+// 			//buscar
+// 			int f = t.aparitions(s);
+// 			cout << f << endl;
+// 		}
+// 	}
+// }
