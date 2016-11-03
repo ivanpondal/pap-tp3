@@ -1,3 +1,53 @@
 \section{Ejercicio 1}
 
 Peso asignado: X.
+
+\subsection{Problema}
+
+El enunciado del problema plantea un escenario en el que se desea la capacidad de determinar si una cadena de caracteres (\textit{string}) es \textit{substring} de otra con una determinada restricción de eficiencia.
+
+Formalmente, si notamos $AB$ al string concatenación de los strings $A$ y $B$, dados los strings $T$ y $S$, $T$ será substring de $S$ si existe un prefijo $S_1$ de $S$ y un sufijo $S_2$ de $S$ tales que $S = S_1 T S_2$. Notemos que:
+\begin{itemize}
+\item Para que el problema tenga sentido, la longitud de $T$, notada $|T|$, debe ser menor o igual a la de $S$, i.e, es una precondición del problema que $|T| \leq |S|$.
+\item Tanto $S_1$ como $S_2$ pueden ser el \textit{string vacío}, que consideraremos de longitud $0$, en cuyo caso $T$ sería prefijo o sufijo de $S$ respectivamente.
+\end{itemize}
+
+En el caso particular de este enunciado, el mismo restringe que la longitud de ambos strings de entrada del problema sean no-vacíos.
+
+En este contexto, se pide diseñar un algoritmo que, dados dos strings $T$ y $S$ tales que $0 < |T| \leq |S|$, informe si $T$ es substring de $S$ en tiempo lineal en la longitud de $S$. Llamaremos \textit{patrón} a $T$ y \textit{texto} a $S$.
+
+\subsection{Resolución}
+
+\subsubsection{Un problema equivalente}
+
+\textbf{Definición:} Un substring $B$ de $R$ con $|R| > 0$ se dice \textit{borde de R} si es prefijo y sufijo de $R$. Diremos que el borde $B$ de $R$ es \textit{no-cruzado} si existe un substring $M$ de $R$ tal que $R = BMB$. Un borde se denominará \textit{cruzado} si no es \textit{no-cruzado}. Notemos que tanto el substring vacío como el string entero $R$ son trivialmente bordes de $R$; sin embargo, $R$ no es borde no-cruzado de sí mismo. Ejemplos:
+\begin{itemize}
+\item ``'' es borde de cualquier string.
+\item ``bab'' es borde cruzado de ``babab''.
+\item ``abc'' es borde cruzado de ``abc".
+\item ``abc'' es borde no-cruzado de ``abcxyzabc'' ya que ``abcxyzabc'' = ``abc''``xyz''``abc''.
+\item ``abc'' es borde no-cruzado de ``abcabc'' ya que ``abcabc'' = ``abc''``''``abc''.
+\end{itemize}
+
+\medskip
+
+\textbf{Lema:} Dados dos strings $T$ y $S$ tales que $0 < |T| \leq |S|$: \\
+$T$ es substring de $S$ $\iff$ algún prefijo de $TS$ tiene un borde no-cruzado de longitud $|T|$.
+
+\medskip
+
+\textbf{Demostración:}
+
+$\Longrightarrow) \ $$T$ es substring de $S$ \spaciousimply existen $S_1$ y $S_2$ tales que $S = S_1 T S_2$ \spaciousimply $TS = T S_1 T S_2$ \spaciousimply $T S_1 T$ es un prefijo de $S$ que tiene un borde no-cruzado de longitud $T$.
+
+$\Longleftarrow) \ $Sea $P = B P_1 B$ un prefijo de $TS$ con borde no-cruzado $B$ tal que $|B| = |T|$, de modo que $TS = P S_1 = B P_1 B S_1$. Como tanto $B$ y $T$ son prefijos de $TS$ del mismo tamaño, entonces $B = T$. Por lo tanto, $TS = T P_1 T S_1$, lo cual equivale a $S = P_1 T S_1$ removiendo $T$ a izquierda de ambos lados. Entonces, $T$ es substring de $S$.
+
+\medskip
+
+En conclusión, dada una entrada válida $T, S$ del problema planteado en la sección anterior, determinar si $T$ es substring de $S$ equivale a determinar si algún prefijo de $TS$ tiene un borde no-cruzado de tamaño $T$. El algoritmo que presentamos se piensa como solución al segundo problema.
+
+\subsubsection{Idea del algoritmo}
+
+Lollipop Lollipop Oh Lolli Lolli Lolli
+
+\subsection{Casos de prueba}
