@@ -2,6 +2,10 @@
 
 Peso asignado: X.
 
+\subsection{Introducción}
+
+En esta sección detallamos la resolución del ejercicio 1 del trabajo práctico. Para eso, primero extraemos del enunciado una especificación del problema que plantea y luego identificamos un problema equivalente a él, desmotrando esa equivalencia. En lo siguiente nos concentramos en proponer un algoritmo que resuelva el segundo problema.
+
 \subsection{Problema}
 
 El enunciado del problema plantea un escenario en el que se desea la capacidad de determinar si una cadena de caracteres (\textit{string}) es \textit{substring} de otra con una determinada restricción de eficiencia.
@@ -16,11 +20,11 @@ En el caso particular de este enunciado, el mismo restringe que la longitud de a
 
 En este contexto, se pide diseñar un algoritmo que, dados dos strings $T$ y $S$ tales que $0 < |T| \leq |S|$, informe si $T$ es substring de $S$ en tiempo lineal en la longitud de $S$. Llamaremos \textit{patrón} a $T$ y \textit{texto} a $S$.
 
-\subsection{Resolución}
+\subsection{Un problema equivalente}
 
-\subsubsection{Un problema equivalente}
+\subsubsection{Definición}
 
-\textbf{Definición:} Un substring $B$ de $R$ con $|R| > 0$ se dice \textit{borde de R} si es prefijo y sufijo de $R$. Diremos que el borde $B$ de $R$ es \textit{no-cruzado} si existe un substring $M$ de $R$ tal que $R = BMB$. Un borde se denominará \textit{cruzado} si no es \textit{no-cruzado}. Notemos que tanto el substring vacío como el string entero $R$ son trivialmente bordes de $R$; sin embargo, $R$ no es borde no-cruzado de sí mismo. Ejemplos:
+Un substring $B$ de $R$ con $|R| > 0$ se dice \textit{borde de R} si es prefijo y sufijo de $R$. Diremos que el borde $B$ de $R$ es \textit{no-cruzado} si existe un substring $M$ de $R$ tal que $R = BMB$. Un borde se denominará \textit{cruzado} si no es \textit{no-cruzado}. Notemos que tanto el substring vacío como el string entero $R$ son trivialmente bordes de $R$; sin embargo, $R$ no es borde no-cruzado de sí mismo. Ejemplos:
 \begin{itemize}
 \item ``'' es borde de cualquier string.
 \item ``bab'' es borde cruzado de ``babab''.
@@ -29,25 +33,55 @@ En este contexto, se pide diseñar un algoritmo que, dados dos strings $T$ y $S$
 \item ``abc'' es borde no-cruzado de ``abcabc'' ya que ``abcabc'' = ``abc''``''``abc''.
 \end{itemize}
 
-\medskip
-
-\textbf{Lema:} Dados dos strings $T$ y $S$ tales que $0 < |T| \leq |S|$: \\
+\subsubsection{Propiedad:} Dados dos strings $T$ y $S$ tales que $0 < |T| \leq |S|$: \\
 $T$ es substring de $S$ $\iff$ algún prefijo de $TS$ tiene un borde no-cruzado de longitud $|T|$.
 
-\medskip
-
-\textbf{Demostración:}
+\subsubsection{Demostración:}
 
 $\Longrightarrow) \ $$T$ es substring de $S$ \spaciousimply existen $S_1$ y $S_2$ tales que $S = S_1 T S_2$ \spaciousimply $TS = T S_1 T S_2$ \spaciousimply $T S_1 T$ es un prefijo de $S$ que tiene un borde no-cruzado de longitud $T$.
 
 $\Longleftarrow) \ $Sea $P = B P_1 B$ un prefijo de $TS$ con borde no-cruzado $B$ tal que $|B| = |T|$, de modo que $TS = P S_1 = B P_1 B S_1$. Como tanto $B$ y $T$ son prefijos de $TS$ del mismo tamaño, entonces $B = T$. Por lo tanto, $TS = T P_1 T S_1$, lo cual equivale a $S = P_1 T S_1$ removiendo $T$ a izquierda de ambos lados. Entonces, $T$ es substring de $S$.
 
-\medskip
+\subsubsection{Conclusión}
 
 En conclusión, dada una entrada válida $T, S$ del problema planteado en la sección anterior, determinar si $T$ es substring de $S$ equivale a determinar si algún prefijo de $TS$ tiene un borde no-cruzado de tamaño $T$. El algoritmo que presentamos se piensa como solución al segundo problema.
 
-\subsubsection{Idea del algoritmo}
+\subsection{Algoritmo}
 
-Lollipop Lollipop Oh Lolli Lolli Lolli
+El algoritmo consiste en dos etapas. Dado el patrón $T$ y el texto $S$, en la primera etapa se reúne información acerca de las longitudes de los bordes de todos los prefijos de $TS$, mientras que en la segunda se procesa la información recopilada en la primera para decidir si $T$ es substring de $S$ usando la propiedad enunciada en la sección anterior.
+
+\subsubsection{Primera etapa}
+
+Damos el algoritmo \textit{BordesDePrefijos} que, dado un string no-vacío de entrada $S$, devuelve un diccionario que asocia a cada posible longitud de prefijo de $S$ (naturales entre 0 y $|S|$) la longitud de su mayor borde. Dado que todos los prefijos de un string particular pueden identificarse sin ambigüedad por su longitud, este diccionario contiene toda la información necesaria para poder evaluar si el string con el que fue procesado tiene prefijos con bordes de cierta longitud, de modo que nos servirá para el procesamiento de la segunda etapa.
+
+\bigskip
+
+\begin{algorithm}[H]
+	\caption{BordesDePrefijos}
+	\Input{ $S$: string no vacío }
+	\Output{ $T$: diccionario $\langle \mathbb{N} , \mathbb{N} \rangle$ }
+
+	$T \gets$ diccionario $\langle \mathbb{N} , \mathbb{N} \rangle$ de tamaño $|S|+1$ \\
+	$T [0] \gets -1$ \\
+	$T [1] \gets 0$ \\
+	$k \gets 0$ \\
+	
+    \For {$i$ de 2 a $|S|$} {
+	\While {$k \neq -1 \wedge S[i-1] \neq S[k]$} {
+		$k \gets T[k]$
+    	}
+	$k \gets k+1$ \\
+	$T[i] \gets k$
+}
+
+	\Return{T}	
+\end{algorithm}
+
+
+\subsection{Complejidad}
+
+\subsubsection{Complejidad de la primera etapa}
+\subsubsection{Complejidad de la segunda etapa}
+\subsubsection{Conclusión}
 
 \subsection{Casos de prueba}
