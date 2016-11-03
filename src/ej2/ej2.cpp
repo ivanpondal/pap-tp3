@@ -7,7 +7,36 @@ using namespace std;
 **  Problem solver
 */
 
+int maxAparitions(Trie& emails, list<string>& nicknames) {
+    int max = 0;
+    for(list<string>::iterator it = nicknames.begin(); it != nicknames.end(); it++) {
+        int aparitions = emails.aparitions(*it);
+        if(aparitions > max)
+            max = aparitions;
+    }
+
+    return max;
+}
+
 void run_solver() {
+
+    Trie emails;
+    list<string> nicknames;
+
+    int alumns;
+    cin >> alumns;
+
+    for(int a = 0; a < alumns; a++) {
+        string email;
+        int nickname;
+        cin >> email >> nickname;
+
+        emails.insert(email);
+        nicknames.push_back(email.substr(0, nickname));
+    }
+
+    int max = maxAparitions(emails, nicknames);
+    cout << max << endl;
 }
 
 // MAIN
