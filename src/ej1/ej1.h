@@ -2,6 +2,9 @@
 #define PAP_TP3_EJ1_H
 
 #include "../main.h"
+#include <string>
+
+using namespace std;
 
 /*
 **  Exercise 1
@@ -9,5 +12,19 @@
 
 // Here go declarations of functions which are exported by the problem solver,
 // global variables, etc.
+
+bool substring(const string& apodo, const string& nombre);
+vector<int> prefix_border_lengths(const string& pattern);
+
+struct pbl_case {
+	string t;
+	vector<int> expected;
+};
+
+struct substr_case {
+	string t;
+	string s;
+	bool expected;
+};
 
 #endif // PAP_TP3_EJ1_H

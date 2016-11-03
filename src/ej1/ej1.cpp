@@ -7,7 +7,54 @@ using namespace std;
 **  Problem solver
 */
 
+vector<int> prefix_border_lengths(const string& s) {
+    vector<int> T(s.size()+1);
+
+    T[0] = -1;
+
+    if (s.size() == 1) {
+        return T;
+    }
+
+    T[1] = 0;
+
+    size_t j = 2;
+    int k = 0;
+
+    while (j < s.size()+1) {
+        while (k > -1 && s[j-1] != s[k]) {
+            k = T[k];
+        }
+        k++;
+        T[j] = k;
+        j++;
+    }
+    return T;
+}
+
+bool substring(const string& t, const string& s) {
+    int m = t.size();
+
+    string ts = t + s;
+    vector<int> pbl = prefix_border_lengths(ts);
+
+    for (size_t i = 0; i < pbl.size(); ++i) {
+        if (pbl[i] >= m) {
+            return true;
+        }
+    }
+    return false;
+}
+
 void run_solver() {
+    string nombre, apodo;
+    cin >> nombre >> apodo;
+
+    if (substring(apodo, nombre)) {
+        cout << "S" << endl;
+    } else {
+        cout << "N" << endl;
+    }
 }
 
 // MAIN
