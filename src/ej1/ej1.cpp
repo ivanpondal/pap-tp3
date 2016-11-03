@@ -11,11 +11,6 @@ vector<int> prefix_border_lengths(const string& s) {
     vector<int> T(s.size()+1);
 
     T[0] = -1;
-
-    if (s.size() == 1) {
-        return T;
-    }
-
     T[1] = 0;
 
     size_t j = 2;
