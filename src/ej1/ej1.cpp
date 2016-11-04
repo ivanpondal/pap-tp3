@@ -25,7 +25,7 @@ vector<bool> prefix_borders_of_length(const string& s, int m) {
         }
         k++;
         T[j] = k;
-        F[j] = k == m || F[T[j]];
+        F[j] = k == m || F[k];
         j++;
     }
     
