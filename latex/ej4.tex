@@ -1,3 +1,178 @@
 \section{Ejercicio 4}
 
 Peso asignado: X.
+
+\subsection{Introducción}
+
+El objetivo de este ejercicio era brindar un algoritmo que tomando como entrada
+$D$ días con un número entero positivo denotando su diversión, y $R$ intervalos
+sobre los días, retornara la suma de los dos días de mayor diversión para cada
+rango. Además, la complejidad temporal del mismo debía estar acotada por
+\ord($D + R \times \log{D}$).
+
+\subsection{Solución propuesta}
+
+El problema planteado es uno de consultas sobre intervalos donde para cada uno
+de estos rangos se pide poder responder de forma rápida cuál es la suma de los
+dos eventos más entretenidos.
+
+Para esto se tienen varias estructuras que habiendo definido un operador binario
+asociativo permiten aplicarlo eficientemente a distintos rangos del mismo
+arreglo. Sin embargo, la operación que interesa utilizar para el ejercicio en
+cuestión no es binaria.
+
+La misma se puede definir de la siguiente manera:
+
+\begin{equation*}
+	\emph{sumaDosMásDivertidos}(A, i, j) = \max(A\left[i, j\right)) +
+	\max(A\left[i, j\right) - \left\{\max(A\left[i, j\right))\right\})
+\end{equation*}
+
+Como se puede observar no es más que sumarle al máximo del intervalo, el máximo
+sin ese elemento. Entonces uno podría reescribir la operación de forma de llegar
+a la siguiente formulación:
+
+\begin{align*}
+	\emph{sumaDosMásDivertidos} & (A, i, j) = \\
+	& \max(A\left[i, j\right)) + \max( \\
+	& \max(A\left[i, pos(A, \max(A\left[i, j\right))\right)), \\
+	& \max(A\left[pos(A, \max(A\left[i, j\right))) + 1, j\right)) \\
+	& )
+\end{align*}
+
+Donde \emph{pos} devuelve la posición en el arreglo de la primera aparición del
+elemento que se le pasa por parámetro.
+
+Por lo tanto es posible realizar la operación pedida únicamente consultando por
+el máximo, que es un operador binario y asociativo, lo cual nos permite
+utilizar las estructuras estudiadas.
+
+A la hora de decidir qué estructura implementar es necesario tener en
+consideración la complejidad temporal pedida de \ord($D + R \times \log{D}$).
+
+Se analizarán las siguientes estructuras:
+
+\begin{itemize}
+	\item{Tabla Adtitiva}
+	\item{Sparse Table}
+	\item{Segment Tree}
+\end{itemize}
+
+\subsubsection*{Tabla Aditiva}
+
+Utilizar una \emph{Tabla Aditiva} tiene el beneficio de que su inicialización
+tiene un costo lineal y las consultas se responden en tiempo constante. El
+problema con ella es que para consultar por intervalos es necesario que la
+operación posea una inversa. Como no existe la inversa del máximo, esta opción
+queda descartada.
+
+\subsubsection*{Sparse Table}
+
+Con \emph{Sparse Table} no es necesario que la operación tenga una inversa y las
+consultas se pueden responder en tiempo logarítmico, sin embargo, la
+inicialización tiene un costo \ord($N \times \log N$) donde $N$ es el tamaño del
+arreglo original. Puesto que para el problema el tamaño del arreglo es $D$ y un
+costo \ord($D \times \log D$) no está acotado por \ord($R \times \log{D}$) ya
+que $R$ no tiene por qué estar acotado por $D$, no es posible utilizar
+\emph{Sparse Table} para resolver el problema.
+
+\subsubsection*{Segment Tree}
+
+Queda \emph{Segment Tree}, que no requiere tener la inversa de la operación,
+tiene un costo de inicialización lineal y puede responder consultas en tiempo
+logarítmico. Es así entonces que se decidió implementar la misma para poder
+calcular el máximo de forma rápida en los intervalos necesarios para computar la
+suma de los dos días más entretenidos.
+
+~
+
+A continuación se presenta el pseudocódigo del algoritmo que resuelve el problema:
+
+\begin{algorithm}[H]
+	\caption{Suma dos días de mayor diversión en intervalo}
+	\Input{Arreglo \emph{días} de longitud $D$ con enteros positivos denotando
+	la diversión para cada día y arreglo \emph{consultas} con pares $[i, j)$.}
+	\Output{Para cada consulta devuelve el valor de la suma de los dos días de
+	mayor diversión comprendidos en tal rango.}
+	\emph{segmentTree} $\gets$ crear \emph{Segment Tree} con los valores del
+	arreglo \emph{días} \;
+	\ForEach{\emph{consulta} \textbf{en} \emph{consultas}} {
+		\emph{diversiónMáxima} $\gets$ \emph{segmentTree}.max(\emph{consulta}.i, \emph{consulta}.j) \;
+		\emph{segundaDiversiónMáxima} $\gets$
+		$\max$(\emph{segmentTree}.max(\emph{consulta}.i,
+		\emph{diversiónMáxima}.pos),
+		\emph{segmentTree}.max(\emph{diversiónMáxima}.pos + 1, \emph{consulta}.j))
+		\;
+		\emph{imprimir}(\emph{diversiónMáxima}.valor +
+		\emph{segundaDiversiónMáxima}.valor) \;
+	}
+\end{algorithm}
+
+\subsection{Complejidad teórica}
+
+Se demostrará que el código desarrollado efectivamente tiene una complejidad
+temporal acotada por \ord($D + R \times \log{D}$). Para ello se separará en
+\ord($D$) y \ord($R \times \log{D}$).
+
+La inicialización del \emph{Segment Tree} toma el arreglo de tamaño $D$ y si no
+es potencia de dos hace que lo sea. Luego completa la estructura aplicando la
+operación seleccionada a cada nivel del árbol.
+
+Lo primero, llevar el arreglo a uno de tamaño potencia de dos está acotado por
+\ord($D$) ya que a lo sumo debe extenderlo al doble. Completar el resto del
+árbol consiste en ir de las hojas hasta la raíz, donde en cada paso el valor del
+padre corresponde a la operación aplicada a sus hijos, esto también está acotado
+por \ord($D$) ya que teniendo la representación del árbol en forma de arreglo es
+cuestión de recorrer linealmente del último hasta el primer elemento. Es
+necesario aclarar que además del valor del máximo, en cada nodo se almacena la
+posición del mismo. Por lo tanto la inicialización queda acotada por \ord($D$).
+
+Queda ver que resolver las consultas tiene un costo de \ord($R \times \log{D}$).
+En total se deben responder $R$ consultas, por lo tanto lo que se demostrará es
+que las mismas se pueden responder en tiempo \ord($\log{D}$).
+
+Dado que se utiliza un $Segment Tree$, se sabe que el costo de encontrar el máximo
+para un intervalo en particular tiene costo \ord($\log{D}$). Así ya se tiene el
+primer valor necesario para obtener la suma buscada. El valor del segundo día de
+mayor entretenimiento se obtiene analizando los dos intervalos resultantes al
+quitar el máximo encontrado en el punto anterior. Para ello se busca el máximo
+en cada uno de estos intervalos, nuevamente \ord($\log{D}$). Por último se toma
+el máximo entre ambos, \ord(1). Finalmente se suman ambos valores, también con
+un costo constante.
+
+Por lo tanto, encontrar la suma de los dos días de mayor diversión para un
+intervalo en particular tiene un costo \ord($3 \times \log{D}$) =
+\ord($\log{D}$).
+
+Sumando el costo de inicialización junto al de responder las $R$ consultas se
+concluye que la complejidad temporal del algoritmo es \ord($D + R \times
+\log{D}$).
+
+\subsection{Casos de prueba}
+
+Para evaluar el código desarrollado además de ver que diera los resultados
+correctos en las entradas provistas por el enunciado se realizaron las
+siguientes pruebas:
+
+\begin{itemize}
+	\item{Entradas de tamaño potencia de dos}
+	\item{Entradas de tamaño distinto a una potencia de dos}
+	\item{Entradas con $D = 10^5$ y $R = 10^5$}
+\end{itemize}
+
+Las entradas de tamaño igual y distintas a una potencia de dos se utilizaron
+para comprobar que la inicialización del \emph{Segment Tree} funcionara
+correctamente. Para ambos casos se probaron los siguientes intervalos:
+
+\begin{itemize}
+	\item{Intervalo abarcando la totalidad del arreglo}
+	\item{Intervalo abarcando el medio del arreglo}
+	\item{Intervalo abarcando el comienzo del arreglo}
+	\item{Intervalo abarcando el final del arreglo}
+\end{itemize}
+
+Las entradas con $D = 10^5$ y $R = 10^5$ tenían como propósito corroborar que el
+algoritmo pudiera manejar tamaños grandes sin problemas. Para ello se generó un
+arreglo de tamaño $10^5$ con días de igual diversión y $10^5 - 1$ consultas por
+intervalos de tamaño dos. Así únicamente era necesario asegurar que la suma
+fuera igual a el doble de la diversión asignada a cada día.
