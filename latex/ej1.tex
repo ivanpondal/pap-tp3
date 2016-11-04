@@ -54,7 +54,7 @@ En conclusión, dada una entrada válida $T, S$ del problema planteado en la sec
 
 \subsection{Algoritmo}
 
-El algoritmo consiste en dos etapas. Dado el patrón $T$ y el texto $S$, en la primera etapa se reúne información acerca de las longitudes de los bordes de todos los prefijos de $TS$, mientras que en la segunda se procesa la información recopilada en la primera para decidir si $T$ es substring de $S$ usando la propiedad enunciada en la sección anterior.
+Denominamos \textit{esSubstring} al algoritmo que resuelve el problema. El algoritmo consiste en dos etapas. Dado el patrón $T$ y el texto $S$, en la primera etapa se reúne información acerca de las longitudes de los bordes de todos los prefijos de $TS$. Luego, en una segunda instancia, se procesa la información recopilada en la primera etapa para decidir si $T$ es substring de $S$ usando la propiedad enunciada en la sección anterior.
 
 \subsubsection{Lema de extensión de bordes}
 
@@ -112,10 +112,44 @@ En el ciclo interno, entonces, ni bien se encuentra un borde $B_0$ extensible co
 
 Ahora, para demostrar que la forma de iterar la sucesión de bordes propios $A = B_1, \dots, B_r$ en el ciclo interno es correcta, analicemos la iteración de ese ciclo en la que $k = |B_j|$. El string $B_j$ es el borde un prefijo de $S$, y por lo tanto es un prefijo de $S$ de longitud $k$, es decir, $B_j = P_k$. Al ejecutarse el cuerpo del ciclo, $k$ toma el valor asociado a $k$ en $T$, que corresponde a información acerca del mayor borde propio del prefijo de tamaño $k$ de $S$, $P_k$. O sea, la variable $k$ que tenía el valor $B_j$ pasa a ser la longitud del (y la posición en $S$ inmediatamente posterior al) mayor borde propio de $P_k = B_j$, que es justamente $B_{j-1}$ por definición de la sucesión de bordes propios. Esta operación además es válida ya que el ciclo corta ni bien $k$ toma el valor ad-hoc $-1$ correspondiente al último elemento de la sucesión de  bordes propios, el string vacío.
  
+\subsubsection{Algoritmo final}
+
+Sabiendo cómo obtener la información necesaria sobre los bordes propios de un string con \textit{BordesPropiosDePrefijos}, podemos escribir el algoritmo \textit{esSubstring} que, usando el algoritmo anterior como primera etapa, busca determinar si algún prefijo de $TS$ tiene un borde no-cruzado de longitud igual a $|T|$.
+
+\bigskip
+
+\begin{algorithm}[H]
+	\caption{esSubstring}
+	\Input{ patrón $T$ y texto $S$ }
+	\Output{ booleano que indica si $T$ es substring de $S$ }
+
+	$M \gets \mathit{BordesPropiosDePrefijos}(TS)$
+	
+	\For {$i$ de $2|T|$ a $|TS|$} {
+		\If {$M[i] = |T|$} {
+			\Return{\textit{verdadero}}
+		}
+	}
+
+	\Return{\textit{verdadero}}	
+\end{algorithm}
+
+\bigskip
+
+El algoritmo corre \textit{BordesPropiosDePrefijos} sobre $TS$ y guarda su resultado en $M$, que mapea las longitudes de los prefijos de $TS$ ($0$ a $|TS|$) a las longitudes de sus bordes propios mayores. Su objetivo es, como se dijo arriba, determinar si algún prefijo de $TS$ tiene un borde no-cruzado de longitud $T$, lo cual equivaldría a que $T$ es substring de $S$ por la propiedad enunciada anteriormente.
+
+Esta búsqueda, realizada en el ciclo de la línea 2, comienza en el prefijo de tamaño $2|T|$ de $TS$. Para explicar esto, veamos que cualquier borde de tamaño $T$ de un prefijo de tamaño menor a $2|T|$ es necesariamente un borde cruzado.
+\medskip
+Sea $B$ es un borde de $P_m$ con $m < 2|T|$ tal que $|B| = |T|$. Supongo que existe un string $X$ tal que $P_m = BXB$. Entonces, debe cumplirse $|P_m| = m = 2|B|+|X| = 2|T| + |X| \geq 2|T|$, lo cual es absurdo habiendo supuesto $m < 2|T|$.
+\medskip
+Del mismo modo, cualquier borde de tamaño |T| que se encuentre en un prefijo de tamaño mayor o igual a $2|T|$ naturalmente será no-cruzado. Además, vale observar las claves de $M$ ordenadas crecientemente siempre tendrán, en particular, valores mayores o iguales a $2|T|$, ya que $|M| = |TS|+1 = |T|+|S|+1 \geq 2|T| + 1$ dado que $|S| \geq |T|$ por precondición del problema.
+
+En conclusión, el algoritmo revisa las longitudes de todos los prefijos que pueden llegar a tener bordes no-cruzados de longitud $|T|$, que son los de tamaños $2|T| \dots |TS|$. Ni bien encuentra un prefijo que lo cumple, lo cual equivale a haber determinado que $T$ es substring de $S$ por la propiedad enunciada, el algoritmo devuelve un resultado afirmativo. Si no encuentra ninguno, lo cual por la misma propiedad equivale a que $T$ \textit{no} es substring de $S$, devuelve un resultado negativo.
+ 
 \subsection{Complejidad}
 
 \subsubsection{Complejidad de la primera etapa}
-\subsubsection{Complejidad de la segunda etapa}
+\subsubsection{Complejidad total}
 \subsubsection{Conclusión}
 
 \subsection{Casos de prueba}
