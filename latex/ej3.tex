@@ -42,9 +42,10 @@ respuesta de esta query como $Q_{c_1,a_1,c_2,a_2}$, tenemos que:
 
 \begin{equation*}
 \begin{split}
-    Q_{c_1,a_1,c_2,a_2} & = S_{c_2,a_2} - \sum_{i,j : i \in [1,2,..,c_1], j \in [1,2,..,a_1]}^{}{M_{i,j}} \\
-    					& = \sum_{i=1}^{c_2}{\sum_{j=1}^{a_2}{M_{i,j}}} - 
-    						\sum_{i,j : i \in [1,2,..,c_1], j \in [1,2,..,a_1]}^{}{M_{i,j}} \\
+    Q_{c_1,a_1,c_2,a_2} & = S_{c_2,a_2} - \sum_{i,j : (i \in [1,2,..,c_2], j \in [1,2,..,a_1]) \text{or}
+    						(i \in [1,2,..,c_1], j \in [1,2,..,a_2])}^{}{M_{i,j}} \\
+    					& = \sum_{i=1}^{c_2}{\sum_{j=1}^{a_2}{M_{i,j}}} - \sum_{i,j : (i \in [1,2,..,c_2], j \in [1,2,..,a_1]) \text{or}
+    						(i \in [1,2,..,c_1], j \in [1,2,..,a_2])}^{}{M_{i,j}} \\
     					& = \sum_{i=c_1+1}^{c_2}{\sum_{j=a_1+1}^{a_2}{M_{i,j}}}
 \end{split}
 \end{equation*}
