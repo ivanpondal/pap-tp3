@@ -32,6 +32,7 @@ Un substring $B$ de $R$ con $|R| > 0$ se dice \textit{borde de R} si es prefijo 
 
 Ejemplos:
 \begin{itemize}
+\setlength\itemsep{0em}
 \item ``'' es borde no-cruzado y propio de cualquier string no-vacío.
 \item ``bab'' es borde cruzado y propio de ``babab''.
 \item ``abc'' es borde cruzado y no es propio de ``abc".
@@ -39,7 +40,7 @@ Ejemplos:
 \item ``abc'' es borde no-cruzado de ``abcabc'' ya que ``abcabc'' = ``abc''``''``abc'', y es propio.
 \end{itemize}
 
-\subsubsection{Propiedad:} Dados dos strings $T$ y $S$ tales que $0 < |T| \leq |S|$: \\
+\subsubsection{Propiedad:} Dados dos strings $T$ y $S$ tales que $0 < |T| \leq |S|$:
 $T$ es substring de $S$ $\iff$ algún prefijo de $TS$ tiene un borde no-cruzado de longitud $|T|$.
 
 \subsubsection{Demostración:}
@@ -67,7 +68,8 @@ El elemento $B_r$ en todos los casos será el string vacío, siendo que siempre 
 \textbf{Lema.} Dado el string no-vacío $S$ y su sucesión de bordes propios $A_S = B_1, \dots, B_r$, el mayor borde propio del string $Sc$ para un caracter $c$ es
 
 \begin{itemize}
-\item $Bc$ siendo $B$ el elemento de mayor longitud de $A_S$ al cual le sigue el caracter $c$ en $S$, si tal $B$ existe;
+\setlength\itemsep{0em}
+\item o bien $Bc$, siendo $B$ el string más largo de $A_S$ al cual le sigue el caracter $c$ en $S$, si tal $B$ existe;
 \item o bien el string vacío, si tal $B$ no existe.
 \end{itemize}
 
@@ -139,10 +141,10 @@ Sabiendo cómo obtener la información necesaria sobre los bordes propios de un 
 El algoritmo corre \textit{BordesPropiosDePrefijos} sobre $TS$ y guarda su resultado en $M$, que mapea las longitudes de los prefijos de $TS$ ($0$ a $|TS|$) a las longitudes de sus bordes propios mayores. Su objetivo es, como se dijo arriba, determinar si algún prefijo de $TS$ tiene un borde no-cruzado de longitud $T$, lo cual equivaldría a que $T$ es substring de $S$ por la propiedad enunciada anteriormente.
 
 Esta búsqueda, realizada en el ciclo de la línea 2, comienza en el prefijo de tamaño $2|T|$ de $TS$. Para explicar esto, veamos que cualquier borde de tamaño $T$ de un prefijo de tamaño menor a $2|T|$ es necesariamente un borde cruzado.
-\medskip
+
 Sea $B$ es un borde de $P_m$ con $m < 2|T|$ tal que $|B| = |T|$. Supongo que existe un string $X$ tal que $P_m = BXB$. Entonces, debe cumplirse $|P_m| = m = 2|B|+|X| = 2|T| + |X| \geq 2|T|$, lo cual es absurdo habiendo supuesto $m < 2|T|$.
-\medskip
-Del mismo modo, cualquier borde de tamaño |T| que se encuentre en un prefijo de tamaño mayor o igual a $2|T|$ naturalmente será no-cruzado. Además, vale observar las claves de $M$ ordenadas crecientemente siempre tendrán, en particular, valores mayores o iguales a $2|T|$, ya que $|M| = |TS|+1 = |T|+|S|+1 \geq 2|T| + 1$ dado que $|S| \geq |T|$ por precondición del problema.
+
+Del mismo modo, cualquier borde de tamaño $|T|$ que se encuentre en un prefijo de tamaño mayor o igual a $2|T|$ naturalmente será no-cruzado. Además, vale observar las claves de $M$ ordenadas crecientemente siempre tendrán, en particular, valores mayores o iguales a $2|T|$, ya que $|M| = |TS|+1 = |T|+|S|+1 \geq 2|T| + 1$ dado que $|S| \geq |T|$ por precondición del problema.
 
 En conclusión, el algoritmo revisa las longitudes de todos los prefijos que pueden llegar a tener bordes no-cruzados de longitud $|T|$, que son los de tamaños $2|T| \dots |TS|$. Ni bien encuentra un prefijo que lo cumple, lo cual equivale a haber determinado que $T$ es substring de $S$ por la propiedad enunciada, el algoritmo devuelve un resultado afirmativo. Si no encuentra ninguno, lo cual por la misma propiedad equivale a que $T$ \textit{no} es substring de $S$, devuelve un resultado negativo.
  
