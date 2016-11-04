@@ -11,7 +11,9 @@ la diferencia de sueldo entre el cargo actual y un cargo futuro.
 Como entrada recibimos los enteros $C$ (cantidad de cargos), $A$ (niveles de antigüedad), $Q$ (cantidad de queries), una matriz $M$
 de tamaño $C \times A$ y las Q queries con formato $<c_1, a_1, c_2, a_2>$.
 
-A partir de esto se define el sueldo de un docente con cargo $c$ y antigüedad $a$ como:
+A partir de esto se define el sueldo de un docente con cargo $c$ y antigüedad $a$ como la suma de
+todos los montos $M_{i,j}$ con $1 \leq i \leq c$ y $1 \leq j \leq a$. Suponiendo que $c > 1$ y
+antigüedad $a > 1$, lo escribimos como:
 
 \begin{equation*}
 \begin{split}
@@ -22,6 +24,33 @@ A partir de esto se define el sueldo de un docente con cargo $c$ y antigüedad $
     		& = M_{c,a} + S_{c-1,a} + S_{c,a-1} - S_{c-1,a-1}
 \end{split}
 \end{equation*}
+
+Ahora bien, para los otros casos:
+
+\begin{equation*}
+\begin{split}
+    S_{1,1} & = M_{1,1} \\
+    S_{1,a} & = \sum_{i=1}^{a}{M_{1,i}} \text{   (con $a > 1$)} \\
+    S_{c,1} & = \sum_{i=1}^{c}{M_{i,1}} \text{   (con $c > 1$)}
+\end{split}
+\end{equation*}
+
+Luego nos piden calcular, para cada query $<c_1, a_1, c_2, a_2>$, la parte del sueldo de un docente que
+cobraría si tuviera cargo $c_2$ y antigüedad $a_2$, pero no podría cobrar teniendo cargo $c_1$ (sin importar
+si consigue la antigüedad $a_2$) o antigüedad $a_1$ (sin importar si tiene el cargo $c_2$). Si definimos la
+respuesta de esta query como $Q_{c_1,a_1,c_2,a_2}$, tenemos que: 
+
+\begin{equation*}
+\begin{split}
+    Q_{c_1,a_1,c_2,a_2} & = S_{c_2,a_2} - \sum_{i,j : i \in [1,2,..,c_1], j \in [1,2,..,a_1]}^{}{M_{i,j}} \\
+    					& = \sum_{i=1}^{c_2}{\sum_{j=1}^{a_2}{M_{i,j}}} - 
+    						\sum_{i,j : i \in [1,2,..,c_1], j \in [1,2,..,a_1]}^{}{M_{i,j}} \\
+    					& = \sum_{i=c_1+1}^{c_2}{\sum_{j=a_1+1}^{a_2}{M_{i,j}}}
+\end{split}
+\end{equation*}
+
+Que es exactamente la suma de los $M_{i,j}$ (es decir, los cargos y antigüedades) al que el docente
+quiere llegar pero no puede cobrar teniendo antigüedad $a_1$ o cargo $c_1$.
 
 Mediante esta información, vamos a calcular el resultado de cada query $<c_1, a_1, c_2, a_2>$ como:
 
@@ -44,7 +73,7 @@ El algoritmo consiste en dos partes: encontrar $S_{c,a}$ para cada valor posible
 para cada query.
 
 Para hacer esto vamos a modelar $S$ como una matriz que completaremos al principio del 
-algoritmo con tal de tenerla calculada para cada query. Cada query $Q_{c_1,a_1,c_2,a_2}$ a su vez, sera calculada
+algoritmo con tal de tenerla calculada para cada query. Cada query $Q_{c_1,a_1,c_2,a_2}$ a su vez, será calculada
 a partir de los valores de $S$.
 
 Como se puede ver en las ecuaciones anteriores, calcular cada $S_{c,a}$ se puede hacer fácilmente a partir de los valores adyacentes
@@ -52,8 +81,9 @@ en la matriz. Es esencialmente un problema de programación dinámica.
 
 Y las ecuaciones mismas garantizan la correctitud del algoritmo.
 
-$Observaci\acute{o}n: $ la idea parte de implementar una Tabla Aditiva Bidimencional $S$ para $M_{i,j}$ y calcular las queries a partir
-de los `cuadrados de suma' que esta genera.
+$Observaci\acute{o}n: $ la idea se puede ver como implementar una Tabla Aditiva Bidimencional $S$ para $M_{i,j}$ y calcular las queries a partir de los `cuadrados de suma' que esta genera, pero no se requiere explicar este concepto ya que las ecuaciones
+de la sección anterior demuestran la correctitud de la programación dinámica y como esas cuentas resuelven el problema (sin pasar
+por el concepto de Tabla Aditiva explícitamente).
 
 \subsubsection*{Pseudocodigo}
 
