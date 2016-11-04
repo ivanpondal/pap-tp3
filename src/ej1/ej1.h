@@ -13,8 +13,10 @@ using namespace std;
 // Here go declarations of functions which are exported by the problem solver,
 // global variables, etc.
 
+#define MAX_EJ1_INPUT_SIZE 100000
+
 bool substring(const string& apodo, const string& nombre);
-vector<int> prefix_border_lengths(const string& pattern);
+vector<bool> prefix_borders_of_length(const string& pattern);
 
 struct pbl_case {
 	string t;

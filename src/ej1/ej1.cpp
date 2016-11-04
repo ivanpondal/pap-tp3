@@ -7,8 +7,11 @@ using namespace std;
 **  Problem solver
 */
 
-vector<int> prefix_border_lengths(const string& s) {
+// return a an array F of flags where F[i] indicates
+// whether prefix of length i has a border of length m
+vector<bool> prefix_borders_of_length(const string& s, int m) {
     vector<int> T(s.size()+1);
+    vector<bool> F(s.size()+1, false);
 
     T[0] = -1;
     T[1] = 0;
@@ -22,25 +25,26 @@ vector<int> prefix_border_lengths(const string& s) {
         }
         k++;
         T[j] = k;
+        F[j] = k == m || F[T[j]];
         j++;
     }
-    return T;
+    
+    return F;
 }
 
 bool substring(const string& t, const string& s) {
     int m = t.size();
 
     string ts = t + s;
-    vector<int> pbl = prefix_border_lengths(ts);
+    vector<bool> f = prefix_borders_of_length(ts, m);
 
     // start at 2*m to avoid crossing-borders. 
-    // given a prefix of ts of size <2*m, any of its borders of size >=m will be crossing-borders
-    // cout << "pbl " << pbl << endl;
-    for (size_t i = 2*m; i < pbl.size(); ++i) {
-        if (pbl[i] == m) {
+    for (size_t i = 2*m; i < f.size(); ++i) {
+        if (f[i]) {
             return true;
         }
     }
+
     return false;
 }
 
