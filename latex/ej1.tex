@@ -1,6 +1,6 @@
 \section{Ejercicio 1}
 
-Peso asignado: 7.
+Peso asignado: X.
 
 \subsection{Introducción}
 
@@ -45,9 +45,9 @@ $T$ es substring de $S$ $\iff$ algún prefijo de $TS$ tiene un borde no-cruzado 
 
 \subsubsection{Demostración:}
 
-$\Longrightarrow) \ $$T$ es substring de $S$ \spaciousimply existen $S_1$ y $S_2$ tales que $S = S_1 T S_2$ \spaciousimply $TS = T S_1 T S_2$ \spaciousimply $T S_1 T$ es un prefijo de $S$ que tiene un borde no-cruzado de longitud $T$.
+$\Longrightarrow) \ $$T$ es substring de $S$ \spaciousimply existen $S_1$ y $S_2$ tales que $S = S_1 T S_2$ \spaciousimply $TS = T S_1 T S_2$ \spaciousimply $T S_1 T$ es un prefijo de $TS$ que tiene un borde no-cruzado de longitud $T$.
 
-$\Longleftarrow) \ $Sea $P = B P_1 B$ un prefijo de $TS$ con borde no-cruzado $B$ tal que $|B| = |T|$, de modo que $TS = P S_1 = B P_1 B S_1$. Como tanto $B$ y $T$ son prefijos de $TS$ del mismo tamaño, entonces $B = T$. Por lo tanto, $TS = T P_1 T S_1$, lo cual equivale a $S = P_1 T S_1$ removiendo $T$ a izquierda de ambos lados. Entonces, $T$ es substring de $S$.
+$\Longleftarrow) \ $Sea $P = B P_1 B$ un prefijo de $TS$ con borde no-cruzado $B$ tal que $|B| = |T|$, de modo que $TS = P S_1 = B P_1 B S_1$. Como tanto $B$ y $T$ son prefijos de $TS$ del mismo tamaño, entonces $B = T$. Por lo tanto, $TS = T P_1 T S_1$, lo cual equivale a $S = P_1 T S_1$ quitando $T$ a izquierda de ambos lados. Entonces, $T$ es substring de $S$.
 
 \subsubsection{Conclusión}
 
@@ -150,9 +150,13 @@ En conclusión, el algoritmo revisa las longitudes de todos los prefijos que pue
  
 \subsection{Complejidad}
 
+\subsubsection{Detalles de implementación}
+
+Se supone una estructura de diccionario que permite la inicialización de una instancia de tamaño $n$ en tiempo $O(n)$ y la lectura y escritura de definiciones en $O(1)$. Dado que las claves de nuestro diccionario son $0 \dots m$ para un $m > 0$, el diccionario puede ser implementado mediante un arreglo de $m+1$ posiciones cuyos índices representan las claves. Además, se supone la capacidad de concatenar un par de strings $A$ y $B$ en tiempo $O(|A|+|B|) = O(|AB|)$ y de acceder a sus caracteres en $O(1)$.
+
 \subsubsection{Complejidad de la primera etapa}
 
-El algoritmo comienza definiendo el diccionario (o arreglo) $T$ con tamaño $O(|S|)$ y el entero $k$.
+El algoritmo comienza definiendo el diccionario $T$ con tamaño $|S|+1$ en tiempo $O(|S|)$ (en nuestro código esto se logra implementando el diccionario como un arreglo del tamaño mencionado cuyos índices representan las claves) y el entero $k$.
 
 Luego le sigue un ciclo entre las líneas 5-11 (al que llamaremos A), que a su vez contiene otro ciclo
 entre las líneas 6-8 (al que llamaremos B).
@@ -165,9 +169,9 @@ El ciclo A cumple lo siguiente:
 \begin{itemize}
 	\item $T[j] < j$ para todo $j$, esto vale antes de entrar al ciclo
 	y veremos que la asignación de la línea 10 lo preserva.
-	\item $k$ aumenta a lo sumo en 1 por cada ciclo A (mediante la línea 9), esto vale pues por la
+	\item $k$ aumenta a lo sumo en 1 por cada iteración del ciclo A (mediante la línea 9), esto vale pues por la
 	propiedad anterior, $k$ solo puede disminuir en el ciclo B.
-	\item $k$ esta acotado superiormente por $|S|-1$, ya que por la propiedad anterior, nunca
+	\item $k$ está acotado superiormente por $|S|-1$, ya que por la propiedad anterior, nunca
 	aumenta más de 1 vez por iteración.
 	\item $k < i$ en cada iteración del ciclo, esto vale antes de entrar al ciclo
 	y como $i$ aumenta en 1 por cada iteración y $k$ a lo sumo aumenta en 1, se preserva.
@@ -196,8 +200,10 @@ $O($(inicializar el arreglo T) + (trabajo del ciclo A sin contar el ciclo B) + (
 
 \subsubsection{Complejidad total}
 
-\subsubsection{Conclusión}
-
-Da re lineal.
+En \textit{esSubstring} se comienza concatenando $T$ y $S$ en tiempo $O(|TS|)$ invocando \textit{BordesPropiosDePrefijos} con el string $TS$ como parámetro, lo cual a su vez agrega $O(|TS|)$ como vimos en la sección anterior. Luego, el ciclo que sigue realiza $O(|TS|-2|T|) = O(|S|-|T|) = O(|S|)$ iteraciones (recordemos que por precondición $|T| \leq |S|$), donde en cada iteración se realizan $O(1)$ operaciones. En total, entonces, nuestro algoritmo tiene un tiempo de ejecución de $O(2|TS|) + O(S) = O(|TS|)$. A su vez, $O(|TS|) = O(|T|+|S|) = O(2|S|) = O(|S|)$ ya que $|T| \leq |S|$ por precondición, lo cual cumple la restricción requerida en el enunciado.
 
 \subsection{Casos de prueba}
+
+Para 
+
+
