@@ -12,7 +12,7 @@ Dados dos strings $A$ y $B$, notamos $AB$ a su concatenación. En general, los s
 
 \subsection{Problema}
 
-El enunciado del problema plantea un escenario en el que se desea la capacidad de determinar si una cadena de caracteres (\textit{string}) es \textit{substring} de otra con una determinada restricción de eficiencia.
+El enunciado del problema plantea un escenario en el que se desea la capacidad de determinar si un string es \textit{substring} de otro con una determinada restricción de eficiencia.
 
 Formalmente, Dados los strings $T$ y $S$, $T$ será substring de $S$ si existe un prefijo $S_1$ de $S$ y un sufijo $S_2$ de $S$ tales que $S = S_1 T S_2$. Notemos que:
 \begin{itemize}
@@ -22,7 +22,7 @@ Formalmente, Dados los strings $T$ y $S$, $T$ será substring de $S$ si existe u
 
 En el caso particular de este enunciado, el mismo restringe que la longitud de ambos strings de entrada del problema sean no-vacíos.
 
-En este contexto, se pide diseñar un algoritmo que, dados dos strings $T$ y $S$ tales que $0 < |T| \leq |S|$, informe si $T$ es substring de $S$ en tiempo lineal en la longitud de $S$. Llamaremos \textit{patrón} a $T$ y \textit{texto} a $S$.
+En este contexto, se pide diseñar un algoritmo que, dados dos strings $T$ y $S$ tales que $0 < |T| \leq |S|$, informe si $T$ es substring de $S$ en tiempo lineal en la longitud de $S$. Ocasionalmente llamaremos \textit{patrón} a $T$ y \textit{texto} a $S$.
 
 \subsection{Un problema equivalente}
 
@@ -213,7 +213,8 @@ Utilizamos casos de prueba correspondientes a las siguientes familias:
 \item casos variados de resultado negativo
 \item casos en los que la sucesión de bordes propios de la concatenación del patrón y el texto no es trivial
 \item casos con bordes cruzados del tamaño del patrón
-\item casos con los strings del tamaño máximo sugerido por el enunciado para testear carga
+\item casos en los que la concatenación del patrón y el texto tiene al menos un prefijo que posee tanto un borde de tamaño |T| como de tamaños más grandes (para verificar que el algoritmo registre correctamente la existencia de bordes de tamaño |T| a pesar de haber bordes de tamaño mayor)
+\item casos con la entrada del tamaño máximo sugerido por el enunciado para testear carga
 \end{itemize}
 
 
