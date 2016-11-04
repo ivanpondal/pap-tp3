@@ -148,3 +148,49 @@ cadena recorrió ese nodo. Esto significa que consultar dicho número dice
 qué cantidad de veces se insertó un prefijo que llega hasta ese caracter.
 Por lo tanto haciendo la búsqueda para cada prefijo se obtiene la cantidad de
 veces que este aparece.
+
+\subsubsection{Pseudocódigo}
+
+A continuación se expone un pseudocódigo de las funciones de inserción y
+búsqueda del Trie.
+
+~
+
+\begin{algorithm}[H]
+	\caption{insertar}
+	\Input{$String\&$ $prefijo$, $Entero$ $pos$}
+
+	$apariciones$++ \;
+	\eIf {$pos = prefijo$.tamaño()} {
+		$final$ $\gets$ verdadero \;
+	} {
+		\eIf {$hijos$[$prefijo$[$pos$]] == NULL} {
+			$hijos$[$prefijo$[$pos$]] = nuevo Trie($prefijo$, $pos + 1$) \;
+		} {
+			$hijos$[$prefijo$[$pos$]].accederAlPuntero().insertar($prefijo$, $pos + 1$) \;
+		}
+	}
+\end{algorithm}
+
+~
+
+Es importante observar que el string es pasado por referencia. Esto es así
+para evitar el costo de copiado del mismo en cada llamado recursivo.
+
+~
+
+\begin{algorithm}[H]
+	\caption{busqueda}
+	\Input{$String\&$ $prefijo$, $Entero$ $pos$}
+	\Output{$Entero$ $cantApariciones$}
+
+	\eIf {$pos = prefijo$.tamaño()} {
+		\Return $apariciones$ \;
+	} {
+		\eIf {$hijos$[$prefijo$[$pos$]] $=$ NULL} {
+			\Return 0 \;
+		} {
+			\Return $hijos$[$prefijo$[$pos$]].accederAlPuntero().busqueda($prefijo$, $pos + 1$) \;
+		}
+	}
+\end{algorithm}
