@@ -7,12 +7,12 @@ using namespace std;
 **  Problem solver
 */
 
-int maxAparitions(Trie& emails, list<string>& nicknames) {
+int maxApparitions(Trie& emails, list<string>& nicknames) {
     int max = 0;
     for(list<string>::iterator it = nicknames.begin(); it != nicknames.end(); it++) {
-        int aparitions = emails.aparitions(*it);
-        if(aparitions > max)
-            max = aparitions;
+        int apparitions = emails.apparitions(*it);
+        if(apparitions > max)
+            max = apparitions;
     }
 
     return max;
@@ -35,7 +35,7 @@ void run_solver() {
         nicknames.push_back(email.substr(0, nickname));
     }
 
-    int max = maxAparitions(emails, nicknames);
+    int max = maxApparitions(emails, nicknames);
     cout << max << endl;
 }
 

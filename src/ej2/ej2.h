@@ -11,6 +11,6 @@
 // Here go declarations of functions which are exported by the problem solver,
 // global variables, etc.
 
-int maxAparitions(Trie&, list<string>&);
+int maxApparitions(Trie&, list<string>&);
 
 #endif // PAP_TP3_EJ2_H

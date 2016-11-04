@@ -32,7 +32,7 @@ void test_example_1() {
 	nicknames.push_back("mi");
 	nicknames.push_back("miram");
 
-	ASSERT_EQ(4, maxAparitions(emails, nicknames));
+	ASSERT_EQ(4, maxApparitions(emails, nicknames));
 }
 
 void test_example_2() {
@@ -53,7 +53,7 @@ void test_example_2() {
 	nicknames.push_back("c");
 	nicknames.push_back("dddd");
 
-	ASSERT_EQ(1, maxAparitions(emails, nicknames));
+	ASSERT_EQ(1, maxApparitions(emails, nicknames));
 }
 
 void test_example_3() {
@@ -83,7 +83,7 @@ void test_example_3() {
 	nicknames.push_back("estosmail");
 	nicknames.push_back("estosmails");
 
-	ASSERT_EQ(7, maxAparitions(emails, nicknames));
+	ASSERT_EQ(7, maxApparitions(emails, nicknames));
 }
 
 void test_sufix_chains() {
@@ -104,7 +104,7 @@ void test_sufix_chains() {
 	nicknames.push_back("hawai");
 	nicknames.push_back("loshawai");
 
-	ASSERT_EQ(1, maxAparitions(emails, nicknames));
+	ASSERT_EQ(1, maxApparitions(emails, nicknames));
 
 }
 
@@ -141,7 +141,7 @@ void test_multiple_divisions() {
 	nicknames.push_back("hela");
 	nicknames.push_back("hi");
 
-	ASSERT_EQ(4, maxAparitions(emails, nicknames));
+	ASSERT_EQ(4, maxApparitions(emails, nicknames));
 
 }
 
@@ -163,7 +163,7 @@ void test_one_char() {
 	nicknames.push_back("c");
 	nicknames.push_back("d");
 
-	ASSERT_EQ(1, maxAparitions(emails, nicknames));
+	ASSERT_EQ(1, maxApparitions(emails, nicknames));
 
 }
 
@@ -185,7 +185,7 @@ void test_general() {
 	nicknames.push_back("da");
 	nicknames.push_back("basto");
 
-	ASSERT_EQ(1, maxAparitions(emails, nicknames));
+	ASSERT_EQ(1, maxApparitions(emails, nicknames));
 }
 
 void run_unit_tests() {
