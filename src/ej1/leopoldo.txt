@@ -1,0 +1,20 @@
+B es borde de S		
+C es borde de B		
+C es prefijo de B && B es prefijo de S => C es prefijo de S (i.e C == B[0..long(C)] == S[0..long(C)])		
+C es prefijo de B && B es prefijo de S => C es prefijo de S		
+Ocurre lo mismo con los sufijos		
+Entonces C va a ser borde de S		
+
+Tomemos los bordes b1, b2, b3, ..., bs de S ordenados por longitud (b1 == "", long(b2) < long(b3) < long(b4) ...)		
+Entonces, bi es borde de b(i+1) b(i+1)[0..|bi|] = S[0..|bi|] = bi entonces bi es prefijo de b(i+1) y por lo mismo es sufijo		
+Si tenemos el borde maximo de S (bs) entonces tenemos todos, porque el segundo borde mas grande		
+de S es b(s-1) que es el borde mas grande de bs		
+ -		
+la forma de obtener todos los bordes de mayor a menor, es borde[S], borde[borde[S]].... siendo borde[si] el borde mas grande de si		
+	
+Supongamos que tenemos Tc, su borde va a ser Sc (ambos terminan en la misma letra), entonces, S es borde de T		
+Sc va a ser extender un borde de T con la letra c, entonces probemos todos los borde, de mayor a menor		
+hasta que podamos extender alguno y ahi cortamos		
+abac abadabac abac		
+ 0010123012345670		
+k = 0

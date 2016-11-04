@@ -17,7 +17,8 @@ vector<int> prefix_border_lengths(const string& s) {
     int k = 0;
 
     while (j < s.size()+1) {
-        while (k > -1 && s[j-1] != s[k]) {
+        // while (k > -1 && s[j-1] != s[k]) {
+        while (k > -1 && (s[j-1] != s[k] || (k+1) > j/2)) {
             k = T[k];
         }
         k++;
@@ -33,10 +34,13 @@ bool substring(const string& t, const string& s) {
     string ts = t + s;
     vector<int> pbl = prefix_border_lengths(ts);
 
+    // cout << "PBL para " << t << " " << s << ": " << pbl << endl;
+
     // start at 2*m to avoid crossing-borders. 
     // given a prefix of ts of size <2*m, any of its borders of size >=m will be crossing-borders
     // cout << "pbl " << pbl << endl;
     for (size_t i = 2*m; i < pbl.size(); ++i) {
+        // if (pbl[i] >= m) {
         if (pbl[i] == m) {
             return true;
         }
