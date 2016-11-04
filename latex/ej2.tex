@@ -108,7 +108,7 @@ ese es el resultado que se retorna. Por lo tanto el valor obtenido representa
 la cantidad de veces que se comparte el prefijo con mayor número de
 repeticiones.
 
-El Trie esta implementado através de una clase que tiene 3 propiedades:
+El Trie esta implementado a través de una clase que tiene 3 propiedades:
 
 \begin{itemize}
 \item Un arreglo de punteros a Trie de 256 elementos llamado \textit{hijos}
@@ -120,8 +120,8 @@ palabra llamado \textit{apariciones}
 
 Al insertar una palabra en el árbol lo que se hace es recorrer recursivamente
 el string y incrementando la posición del elemento a tener en cuenta.
-Empezando por la raiz del árbol (que representa el caracter vacío) se examina
-el primer caracter del string. Su codigo ASCII corresponde a uno de los 256
+Empezando por la raíz del árbol (que representa el caracter vacío) se examina
+el primer caracter del string. Su código ASCII corresponde a uno de los 256
 elementos del arreglo de punteros a Trie que se tiene. El procedimiento es el
 siguiente:
 
@@ -133,11 +133,11 @@ ejecución
 una nueva instancia de Trie llamando a su constructor, el cual setea todos los
 hijos en NULL, establece la cantidad de apariciones en 1 y por último pregunta
 si es el final de la cadena. De serlo se pone final en verdadero. De lo
-contrario se llama recursivamente al constructor pasándo el mismo string como
+contrario se llama recursivamente al constructor pasando el mismo string como
 parámetro pero incrementando en 1 la posición que debe examinarse
 \item Por último, llegado a este punto significa que no es la última posición
 de la cadena y que existe un nodo para la letra actual. En este caso se llama
-recursivamente a la insercion incrementando en 1 la posición del caracter en
+recursivamente a la inserción incrementando en 1 la posición del caracter en
 cuestión
 \end{enumerate}
 
@@ -207,7 +207,7 @@ $\ord(|D_1| + ... + |D_A|) = \ord(S)$..
 \item Se recorre la lista de prefijos y para cada uno se busca su cantidad de
 repeticiones en el Trie de direcciones, guardando en una variable auxiliar el
 máximo de las repeticiones para ir comparando ante cada búsqueda. Realizar
-la busqueda de un prefijo en el árbol de direcciones tiene costo
+la búsqueda de un prefijo en el árbol de direcciones tiene costo
 $\ord(|D_i|)$, por lo tanto hacer esto para todos los prefijos tiene costo
 $\ord(|D_1| + ... + |D_A|) = \ord(S)$.
 \end{enumerate}
@@ -234,7 +234,7 @@ $\ord(|D_i|)$.
 
 \begin{itemize}
 \item Se probó que el algoritmo funciones para los casos proporcionados por
-la catedra
+la cátedra
 \item Caso en que las direcciones son prefijos de otras
 \item Caso en que las direcciones son sufijos de otras
 \item Caso general con varias direcciones
