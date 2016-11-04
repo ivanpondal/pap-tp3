@@ -34,9 +34,9 @@ void run_solver() {
 
 void calculate_salary_difference(int C, int A, int Q, vector< vector<int> >& M, vector<Query>& queries, vector<int>& solutions) {
     // Border case
-    if (C == 0 || A == 0) {
+    if (C < 1 || A < 1) {
         for (int i = 0; i < Q; ++i)
-            cout << 0 << endl;
+            solutions[i] = 0;
         return;
     }
     
@@ -54,7 +54,9 @@ void calculate_salary_difference(int C, int A, int Q, vector< vector<int> >& M, 
     // Solve queries
     for (int i = 0; i < Q; ++i) {
         Query q = queries[i];
-        solutions[i] = S[q.c2][q.a2] - S[q.c1][q.a2] - S[q.c2][q.a1] + S[q.c1][q.a1];
+        solutions[i] = 0;
+        if (q.a1 >=0 && q.a2 > q.a1 && q.c1 >= 0 && q.c2 > q.c1)
+            solutions[i] = S[q.c2][q.a2] - S[q.c1][q.a2] - S[q.c2][q.a1] + S[q.c1][q.a1];
     }
 
     return;

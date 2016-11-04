@@ -46,7 +46,12 @@ void test_2(){
 
 void test_3(){
     vector<int> solutions = vector<int>(1, 0);
+    vector<int> real_sols = {0,0,0,0};
+
 	solve_with_input("cases/case3.dat", solutions);
+    
+    for (int i = 0; i < solutions.size(); ++i)
+        ASSERT_EQ(solutions[i], real_sols[i]);
 }
 
 void test_4(){
