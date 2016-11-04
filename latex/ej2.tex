@@ -193,3 +193,39 @@ para evitar el costo de copiado del mismo en cada llamado recursivo.
 		}
 	}
 \end{algorithm}
+
+\subsection{Complejidad}
+
+Procedimiento del algoritmo:
+
+\begin{enumerate}
+\item Se lee cada dirección junto con un número que representa su prefijo.
+Para cada una se la inserta en el Trie, lo cual tiene costo $\ord(|D_i|)$, y
+se genera e inserta el prefijo en una lista de string, que a su vez tiene
+costo $\ord(|D_i|)$. En total esta operación tiene costo
+$\ord(|D_1| + ... + |D_A|) = \ord(S)$..
+\item Se recorre la lista de prefijos y para cada uno se busca su cantidad de
+repeticiones en el Trie de direcciones, guardando en una variable auxiliar el
+máximo de las repeticiones para ir comparando ante cada búsqueda. Realizar
+la busqueda de un prefijo en el árbol de direcciones tiene costo
+$\ord(|D_i|)$, por lo tanto hacer esto para todos los prefijos tiene costo
+$\ord(|D_1| + ... + |D_A|) = \ord(S)$.
+\end{enumerate}
+
+Por lo tanto la complejidad final del algoritmo es $\ord(S)$.
+
+~
+
+¿Por qué la inserción y la búsqueda tienen complejidad $\ord(|D_i|)$?
+
+~
+
+En ambos métodos se recorre la cadena recursivamente, la misma es pasada por
+referencia para evitar su costo de copiado. Dentro de ellos solamente se
+ejecutan operaciones de tiempo constante, inclusive en el constructor, en
+donde se inicializan todos los elementos del arreglo de hijos en NULL, ya que
+tiene siempre 256 elementos por lo que se sabe que tiene complejidad
+constante. De esta forma los llamados recursivos funcionan de iteradores de la
+cadena puesto que se incrementa en 1 siempre la posición de la cadena a
+examinar. Por lo tanto sus complejidades son el largo de la cadena,
+$\ord(|D_i|)$.
