@@ -20,6 +20,12 @@ void run_unit_tests() {
 		{"holmund", "holamundo", false}, // negativo
 		{"abac", "abadabacabac", true}, // TS tiene prefijos con sucesión de bordes no trivial
 		{"aba", "babc", false}, // El prefijo "ababa" de TS = abababc tiene un borde de tamaño |T| = 3 que es cruzado, el string "aba"
+		{"abab","abab",true}, // TS tiene prefijos con bordes no cruzados de tamaño |T| y de tamaño mayor a |T|
+		{
+			string(MAX_EJ1_INPUT_SIZE, 'a'),
+			string(MAX_EJ1_INPUT_SIZE, 'a'),
+			true
+		} // caso ad-hoc positivo con tamaño de entrada máximo para load testing
 	};
 
 	for (size_t i = 0; i < substr_cases.size(); ++i) {
