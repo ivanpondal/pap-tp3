@@ -44,13 +44,13 @@ public:
 			hijos[s[pos]]->insert(s,pos+1);
 		}
 	}
-	int aparitions(string &s, int pos = 0) {
+	int apparitions(string &s, int pos = 0) {
 		if(pos == s.size()) {
 			return apariciones;
 		} else if(hijos[s[pos]] == NULL) {
 			return 0;
 		} else {
-			return hijos[s[pos]]->aparitions(s,pos+1);
+			return hijos[s[pos]]->apparitions(s,pos+1);
 		}
 	}
 };
@@ -68,7 +68,7 @@ public:
 // 			t.insert(s);
 // 		} else {
 // 			//buscar
-// 			int f = t.aparitions(s);
+// 			int f = t.apparitions(s);
 // 			cout << f << endl;
 // 		}
 // 	}
