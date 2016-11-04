@@ -81,6 +81,49 @@ Damos el algoritmo \textit{BordesDePrefijos} que, dado un string no-vacío de en
 \subsection{Complejidad}
 
 \subsubsection{Complejidad de la primera etapa}
+
+El algoritmo comienza definiendo el diccionario (o arreglo) $T$ con tamaño $O(|S|)$ y el entero $k$.
+
+Luego le sigue un ciclo entre las líneas 5-11 (al que llamaremos A), que a su vez contiene otro ciclo
+entre las líneas 6-8 (al que llamaremos B).
+
+El ciclo A itera $|S|-1$ veces y dentro realiza asignaciones $O(1)$, además del ciclo B. Es decir que
+sacando el ciclo B, el ciclo A tiene complejidad $O(|S|)$. Lo que se quiere ver es que el ciclo B tiene
+complejidad $O(|S|)$ en total, es decir, entre todas las iteraciones del ciclo A.
+
+El ciclo A cumple lo siguiente:
+\begin{itemize}
+	\item $T[j] < j$ para todo $j$, esto vale antes de entrar al ciclo
+	y veremos que la asignación de la línea 10 lo preserva.
+	\item $k$ aumenta a lo sumo en 1 por cada ciclo A (mediante la línea 9), esto vale pues por la
+	propiedad anterior, $k$ solo puede disminuir en el ciclo B.
+	\item $k$ esta acotado superiormente por $|S|-1$, ya que por la propiedad anterior, nunca
+	aumenta más de 1 vez por iteración.
+	\item $k < i$ en cada iteración del ciclo, esto vale antes de entrar al ciclo
+	y como $i$ aumenta en 1 por cada iteración y $k$ a lo sumo aumenta en 1, se preserva.
+	\item como $k < i$, la línea 10 preserva $T[i] < i$.
+\end{itemize}
+
+Analizando cuántas veces se puede ejecutar el ciclo B vemos que esto depende del valor de $k$.
+Teniendo en cuenta los invariantes anteriores sabemos que $T[k] < k$, por lo cual en la línea 7,
+$k$ decrece. Ahora bien, por cada vez que $k$ aumenta en 1, la línea 7 puede disminuir $k$ en al menos 1.
+
+Por ejemplo supongamos que estamos en una iteración del ciclo A de tal forma que nos faltan procesar $n+t$
+letras y $k == 0$. Después supongamos que las primeras $t$ iteraciones del ciclo A no entran en el ciclo B
+(y así $k$ aumenta en $t$). Luego en la iteración siguiente de A se entra por el ciclo B hasta que
+$k == -1$. Entonces como faltan procesar $n$ letras, $k$ será como máximo $n$ al terminar el ciclo A, 
+ya que por cada ciclo aumenta a lo sumo en 1, pero a su vez el ciclo B de ahora en más solo podrá
+decrecer $n$ veces.
+
+Por lo tanto, por cada vez que $k$ aumenta en 1 en la línea 9, se podrá entrar 1 vez más en el ciclo B. Esto
+quiere decir que la cantidad de iteraciones del ciclo B esta acotado por el máximo valor de $k$, que ya
+vimos en las propiedades del ciclo A, esta acotado por $|S|-1$. Entonces el ciclo B se repite a lo sumo $|S|-1$
+veces.
+
+Teniendo en cuenta todo lo anterior, la complejidad total es:
+$O($(inicializar el arreglo T) + (trabajo del ciclo A sin contar el ciclo B) + (complejidad total del ciclo B)$)
+= O(|S| + |S| + |S|) = O(|S|)$.
+
 \subsubsection{Complejidad de la segunda etapa}
 \subsubsection{Conclusión}
 
