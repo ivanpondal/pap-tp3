@@ -69,8 +69,10 @@ El elemento $B_r$ en todos los casos será el string vacío, siendo que siempre 
 
 \begin{itemize}
 \setlength\itemsep{0em}
-\item o bien $Bc$, siendo $B$ el string más largo de $A_S$ al cual le sigue el caracter $c$ en $S$, si tal $B$ existe;
-\item o bien el string vacío, si tal $B$ no existe.
+\item O bien $Bc$, siendo $B$ el string más largo de $A_S$ al cual le sigue el caracter $c$ en $S$, si tal $B$ existe.
+	Esto vale pues los bordes de $Sc$ no son más que los bordes de $S$ a los que les sigue $c$.
+	Como todos los bordes propios de $S$ están en $A_S$, $B$ solo puede ser el string más largo de $A_S$;
+\item O bien el string vacío, si tal $B$ no existe (es decir, a todos los bordes propios de $S$ le sigue un caracter distinto de $c$).
 \end{itemize}
 
 \subsubsection{Lema de bordes anidados}
