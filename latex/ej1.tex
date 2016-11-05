@@ -73,18 +73,29 @@ El elemento $B_r$ en todos los casos será el string vacío, siendo que siempre 
 \item o bien el string vacío, si tal $B$ no existe.
 \end{itemize}
 
+\subsubsection{Lema de bordes anidados}
+
+Sea $S$ un string no vacío con borde $B$ y un string $B'$ tal que $|B'| < |B|$. Entonces, $B'$ es borde de $B$ $\iff$ $B'$ es borde de $S$.
+
+\medskip
+
+$\Longrightarrow) \ $ si $B'$ es borde de $B$, entonces es prefijo de $B$ que a su vez es prefijo de $S$, con lo cual $B'$ es prefijo de $S$. A su vez, $B'$ es sufijo de $B$ que es sufijo de $S$, por lo que $B'$ también es sufijo de $S$. Por definición, al ser $B'$ tanto prefijo como sufijo de $S$, es borde de $S$.
+
+$\Longleftarrow) \ $ Como $B'$ es prefijo de $S$ de longitud menor que $|B|$, entonces es prefijo de $B$ ya que $B$ es prefijo de $S$. A su vez, $B'$ es sufijo de $S$ de longitud menor que $|B|$, por lo que es sufijo de $B$ ya que $B$ es sufijo de $S$. Como $B'$ es, por ende, tanto prefijo como sufijo de $B$, es borde de $B$.
+
 \subsubsection{Primera etapa}
 
-Damos el algoritmo \textit{BordesPropiosDePrefijos} que, dado un string no-vacío de entrada $S$, devuelve un diccionario que asocia a cada posible longitud de prefijo de $S$ (los $|S|+1$ naturales entre 0 y $|S|$) la longitud de su mayor borde propio. Dado que todos los prefijos de un string particular pueden identificarse sin ambigüedad por su longitud, este diccionario contiene toda la información necesaria para poder evaluar si el string con el que fue procesado tiene prefijos con bordes de cierta longitud, de modo que nos servirá para el procesamiento de la segunda etapa. Notaremos $P_l$ al prefijo de longitud l en el contexto de un string particular. Observemos que nos alcanza con conocer las longitudes de los bordes propios de los prefijos ya que nos interesará en particular evaluar bordes no-cruzados, y estos siempre son propios en strings no-vacíos.
+Damos el algoritmo \textit{BordesPropiosDePrefijosConLongitud} que, dado un string no-vacío de entrada $S$ y un natural $m$, devuelve un diccionario que a cada posible longitud de prefijo de $S$ (los $|S|+1$ naturales entre 0 y $|S|$) asocia un booleano que indica si tiene un borde propio de longitud $m$. Dado que todos los prefijos de un string particular pueden identificarse sin ambigüedad por su longitud, este diccionario contiene toda la información necesaria para el procesamiento de la segunda etapa. Notaremos $P_l$ al prefijo de longitud l en el contexto de un string particular. Observemos que nos alcanza con tratar las longitudes de los bordes \textit{propios} de los prefijos ya que nos interesará en particular evaluar bordes no-cruzados, y estos siempre son propios en strings no-vacíos.
 
 \bigskip
 
 \begin{algorithm}[H]
-	\caption{BordesPropiosDePrefijos}
-	\Input{ string $S$ no vacío }
-	\Output{ diccionario $T$ de naturales en naturales }
+	\caption{BordesPropiosDePrefijosConLongitud}
+	\Input{ string $S$ no vacío y entero $m > 0$ }
+	\Output{ diccionario $T$ de naturales en booleanos }
 
-	$T \gets$ inicializar con tamaño $|S|+1$ \\
+	$T \gets$ inicializar con claves de 0 a $|S|$ \\
+	$F \gets$ inicializar con claves de 0 a $|S|$ y todos los valores en \textit{falso} \\
 	$T [0] \gets -1$ \\
 	$T [1] \gets 0$ \\
 	$k \gets 0$ \\
@@ -94,29 +105,51 @@ Damos el algoritmo \textit{BordesPropiosDePrefijos} que, dado un string no-vací
 		$k \gets T[k]$
     	}
 	$k \gets k+1$ \\
-	$T[i] \gets k$
+	$T[i] \gets k$ \\
+	$F[i] \gets \: k = m \; \vee \; F[k]$
 }
 
-	\Return{T}	
+	\Return{F}	
 \end{algorithm}
 
 \bigskip
 
-En primer lugar, observemos que podemos suponer que $S$ siempre tiene tamaño mayor o igual a 2, ya que la entrada de esta etapa del algoritmo siempre es la concatenación del patrón y el texto que conforman la entrada del problema, que son ambos strings no-vacíos por precondición.
+En términos generales, el diccionario $T$ irá guardando las longitudes de los mayores bordes propios de los prefijos de $S$ a medida que avanza, sirviendo así para ir extendiendo los bordes en base al lema de extensión de bordes. A su vez, para cada prefijo al que se calcula la longitud de su mayor borde propio, en $F$ se guarda si ese prefijo tiene un borde de longitud igual a $m$ utilizando la información en $T$. Observemos que podemos suponer que $S$ siempre tiene tamaño mayor o igual a 2, ya que la entrada de esta etapa del algoritmo siempre es la concatenación del patrón y el texto que conforman la entrada del problema, que son ambos strings no-vacíos por precondición. 
+
+\medskip
 
 El prefijo vacío no interesa en sí a efectos de este problema ya que no tiene bordes propios, por lo que a $T$ en 0 se asocia el valor conveniente ad-hoc de $-1$ que facilita la escritura del código. A su vez, $T$ en 1 siempre será 0 ya que el único borde propio de un string de longitud 1 es el vacío. Notemos que $T$ siempre tendrá al menos tres claves siendo que su tamaño es $|S|+1$ y $|S| \geq 2$ por lo explicado arriba, con lo cual estas operaciones están siempre bien definidas.
 
-En el comienzo de la iteración $i$ del ciclo externo, el algoritmo tiene en la variable $k$ la longitud del mayor borde propio de $P_{i-1}$ calculado en una etapa anterior. De esta forma, $k$ también es la posición en $S$ inmediatamente posterior a la del último caracter de ese borde, en la que también se encuentra el caracter que se agregaría a dicho borde si fuera a extenderse por uno.
+\medskip
 
-En esa $i$-ésima iteración, el objetivo del algoritmo es calcular la longitud del mayor borde propio de $P_i$, que puede escribirse como $P_i = P_{i-1}c$ extendiendo a $P_{i-1}$ con el caracter correspondiente, a partir de lo conocido sobre $P_{i-1}$. Para ello, el aglortimo sigue el lema de extensión de bordes exhibido arriba: busca el string de mayor longitud en la sucesión de bordes propios de $P_{i-1}$ al que le sigue el caracter $c$, y si no lo encuentra se queda con el borde vacío. Esta búsqueda, realizada en el ciclo interno, esencialmente recorre la sucesión de bordes propios de $P_{i-1}$: si esta sucesión es $A_{P_{i-1}} = B_1, \dots, B_r$, la variable $k$ va tomando los valores de las longitudes de los elementos de $A_{P_{i-1}}$ uno por uno en orden decreciente a medida que no se encuentra un borde al que le sigue el caracter $c$ en $S$; observemos que, de manera análoga a lo mencionado arriba respecto de $k$, estos valores también representan la posición inmediatamente siguiente en $S$ de cada string de la sucesión.
+En el comienzo de la iteración $i$ del ciclo externo, el algoritmo tiene:
+\begin{itemize}
+\setlength\itemsep{0em}
+\item En $k$ la longitud del mayor borde propio de $P_{i-1}$ calculado en una etapa anterior. De esta forma, $k$ también es la posición en $S$ inmediatamente posterior a la del último caracter de ese borde, en la que se encuentra el caracter que se agregaría a dicho borde si fuera a extenderse por uno.
+\item En $T[j]$ para todo $0 \leq j < i$ la longitud del mayor borde propio $P_j$.
+\item En $F[j]$ para todo $0 \leq j < i$ un booleano que dice si $P_j$ tiene un borde de longitud exactamente $m$
+\end{itemize}
+
+En esa $i$-ésima iteración, los objetivos del algoritmo son:
+\begin{itemize}
+\setlength\itemsep{0em}
+\item Calcular la longitud del mayor borde propio de $P_i$, que puede escribirse como $P_i = P_{i-1}c$ extendiendo a $P_{i-1}$ con el caracter correspondiente, a partir de lo conocido sobre $P_{i-1}$.
+\item Determinar si $P_i$ tiene un borde de longitud $m$.
+\end{itemize}
+
+Para el primer objetivo, el algoritmo sigue el lema de extensión de bordes exhibido arriba: busca el string de mayor longitud en la sucesión de bordes propios de $P_{i-1}$ al que le sigue el caracter $c$, y si no lo encuentra se queda con el borde vacío. Esta búsqueda, realizada en el ciclo interno, esencialmente recorre la sucesión de bordes propios de $P_{i-1}$: si esta sucesión es $A_{P_{i-1}} = B_1, \dots, B_r$, la variable $k$ va tomando los valores de las longitudes de los elementos de $A_{P_{i-1}}$ uno por uno en orden decreciente a medida que no se encuentra un borde al que le sigue el caracter $c$ en $S$; observemos que, de manera análoga a lo mencionado arriba respecto de $k$, estos valores también representan la posición inmediatamente siguiente en $S$ de cada string de la sucesión.
 
 En el ciclo interno, entonces, ni bien se encuentra un borde $B_0$ extensible con $c$, se sabe por el lema que $B_{0}c$ es el mayor borde propio de $P_i = P_{i-1}c$, se corta el ciclo interno y se asocia a $P_i$ en $T$ la longitud $|B_{0}c| = k+1$; si no encuentra ninguno, se sabe por el lema que el mayor borde propio de $P_i$ es el vacío y se asocia a $P_i$ en $T$ la longitud 0.
 
-Ahora, para demostrar que la forma de iterar la sucesión de bordes propios $A = B_1, \dots, B_r$ en el ciclo interno es correcta, analicemos la iteración de ese ciclo en la que $k = |B_j|$. El string $B_j$ es el borde un prefijo de $S$, y por lo tanto es un prefijo de $S$ de longitud $k$, es decir, $B_j = P_k$. Al ejecutarse el cuerpo del ciclo, $k$ toma el valor asociado a $k$ en $T$, que corresponde a información acerca del mayor borde propio del prefijo de tamaño $k$ de $S$, $P_k$. O sea, la variable $k$ que tenía el valor $B_j$ pasa a ser la longitud del (y la posición en $S$ inmediatamente posterior al) mayor borde propio de $P_k = B_j$, que es justamente $B_{j-1}$ por definición de la sucesión de bordes propios. Esta operación además es válida ya que el ciclo corta ni bien $k$ toma el valor ad-hoc $-1$ correspondiente al último elemento de la sucesión de  bordes propios, el string vacío.
+Para ver que la forma de iterar la sucesión de bordes propios $A = B_1, \dots, B_r$ en el ciclo interno es correcta, analicemos la iteración de ese ciclo en la que $k = |B_j|$. El string $B_j$ es el borde de un prefijo de $S$, y por lo tanto es un prefijo de $S$ de longitud $k$, es decir, $B_j = P_k$. Al ejecutarse el cuerpo del ciclo, $k$ toma el valor asociado a $k$ en $T$, que corresponde a información acerca del mayor borde propio del prefijo de tamaño $k$ de $S$, $P_k$. O sea, la variable $k$ que tenía el valor $|B_j|$ pasa a ser la longitud del (y la posición en $S$ inmediatamente posterior al) mayor borde propio de $P_k = B_j$, que es justamente $B_{j-1}$ por definición de la sucesión de bordes propios. Esta operación además es válida ya que el ciclo corta ni bien $k$ toma el valor ad-hoc $-1$ correspondiente al último elemento de la sucesión de  bordes propios, el string vacío.
+
+\medskip
+
+Para el segundo objetivo, una vez conocida la longitud del mayor borde propio de $P_i$ guardada en la variable $k$ en la línea 10, el algoritmo debe determinar si $P_i$ tiene algún borde propio, no necesariamente el mayor, de longitud exactamente $m$. Si en la iteración $i$ resulta que $k$ es justo $m$, esto es trivialmente cierto y el algoritmo asocia \textit{verdadero} a $F$ en $i$. Si no, entonces revisa si el borde $P_k$ recién calculado de $P_i$ tiene un borde de longitud $m$ consultándolo en $F$, quien tendrá esa información por invariante. Por el lema de bordes anidados, cualquiera sea ese borde de $P_k$, será también borde de $P_i$. Más aún, si $P_k$ no tiene un borde de longitud $m$, por el mismo lema se determina que tampoco lo tiene $P_i$, ya que si lo tuviera, este sería un borde de longitud $m$ de $P_k$ y $F$ en $k$ sería verdadero.
  
 \subsubsection{Algoritmo final}
 
-Sabiendo cómo obtener la información necesaria sobre los bordes propios de un string con \textit{BordesPropiosDePrefijos}, podemos escribir el algoritmo \textit{esSubstring} que, usando el algoritmo anterior como primera etapa, busca determinar si algún prefijo de $TS$ tiene un borde no-cruzado de longitud igual a $|T|$.
+Sabiendo cómo obtener la información necesaria sobre los bordes propios de los prefijos de un string con \textit{BordesPropiosDePrefijosConLongitud}, podemos escribir el algoritmo \textit{esSubstring} que, usando el algoritmo anterior como primera etapa, busca determinar si algún prefijo de $TS$ tiene un borde no-cruzado de longitud igual a $|T|$.
 
 \bigskip
 
@@ -125,28 +158,28 @@ Sabiendo cómo obtener la información necesaria sobre los bordes propios de un 
 	\Input{ patrón $T$ y texto $S$ }
 	\Output{ booleano que indica si $T$ es substring de $S$ }
 
-	$M \gets \mathit{BordesPropiosDePrefijos}(TS)$
+	$M \gets \mathit{BordesPropiosDePrefijosConLongitud}(TS, |T|)$
 	
 	\For {$i$ de $2|T|$ a $|TS|$} {
-		\If {$M[i] = |T|$} {
+		\If {$M[i]$} {
 			\Return{\textit{verdadero}}
 		}
 	}
 
-	\Return{\textit{verdadero}}	
+	\Return{\textit{falso}}	
 \end{algorithm}
 
 \bigskip
 
-El algoritmo corre \textit{BordesPropiosDePrefijos} sobre $TS$ y guarda su resultado en $M$, que mapea las longitudes de los prefijos de $TS$ ($0$ a $|TS|$) a las longitudes de sus bordes propios mayores. Su objetivo es, como se dijo arriba, determinar si algún prefijo de $TS$ tiene un borde no-cruzado de longitud $T$, lo cual equivaldría a que $T$ es substring de $S$ por la propiedad enunciada anteriormente.
+El algoritmo corre \textit{BordesPropiosDePrefijosConLongitud} sobre $TS$ y guarda su resultado en $M$, que mapea cada longitud de prefiojs de $TS$ ($0$ a $|TS|$) a un booleano que indican si ese prefijo posee un borde de longitud |T|. Su objetivo es, como se dijo arriba, determinar específicamente si alguno de esos prefijos de $TS$ tiene un borde no-cruzado de longitud $|T|$, lo cual equivaldría a que $T$ es substring de $S$ por la propiedad enunciada anteriormente.
 
 Esta búsqueda, realizada en el ciclo de la línea 2, comienza en el prefijo de tamaño $2|T|$ de $TS$. Para explicar esto, veamos que cualquier borde de tamaño $T$ de un prefijo de tamaño menor a $2|T|$ es necesariamente un borde cruzado.
 
-Sea $B$ es un borde de $P_m$ con $m < 2|T|$ tal que $|B| = |T|$. Supongo que existe un string $X$ tal que $P_m = BXB$. Entonces, debe cumplirse $|P_m| = m = 2|B|+|X| = 2|T| + |X| \geq 2|T|$, lo cual es absurdo habiendo supuesto $m < 2|T|$.
+Sea $B$ es un borde de $P_m$ con $m < 2|T|$ tal que $|B| = |T|$. Supongamos que existe un string $X$ tal que $P_m = BXB$. Entonces, debe cumplirse $|P_m| = m = 2|B|+|X| = 2|T| + |X| \geq 2|T|$, lo cual es absurdo habiendo supuesto $m < 2|T|$.
 
 Del mismo modo, cualquier borde de tamaño $|T|$ que se encuentre en un prefijo de tamaño mayor o igual a $2|T|$ naturalmente será no-cruzado. Además, vale observar las claves de $M$ ordenadas crecientemente siempre tendrán, en particular, valores mayores o iguales a $2|T|$, ya que $|M| = |TS|+1 = |T|+|S|+1 \geq 2|T| + 1$ dado que $|S| \geq |T|$ por precondición del problema.
 
-En conclusión, el algoritmo revisa las longitudes de todos los prefijos que pueden llegar a tener bordes no-cruzados de longitud $|T|$, que son los de tamaños $2|T| \dots |TS|$. Ni bien encuentra un prefijo que lo cumple, lo cual equivale a haber determinado que $T$ es substring de $S$ por la propiedad enunciada, el algoritmo devuelve un resultado afirmativo. Si no encuentra ninguno, lo cual por la misma propiedad equivale a que $T$ \textit{no} es substring de $S$, devuelve un resultado negativo.
+En conclusión, el algoritmo revisa uno a uno la información contenida en $M$ acerca de los prefijos que pueden llegar a tener bordes no-cruzados de longitud $|T|$, que son los de tamaños $2|T| \dots |TS|$. Ni bien encuentra un prefijo tal que lo cumple, lo cual equivale a haber determinado que $T$ es substring de $S$ por la propiedad mencionada, el algoritmo devuelve un resultado afirmativo. Si no encuentra ninguno, lo cual por la misma propiedad equivale a que $T$ \textit{no} es substring de $S$, devuelve un resultado negativo.
  
 \subsection{Complejidad}
 
@@ -156,12 +189,12 @@ Se supone una estructura de diccionario que permite la inicialización de una in
 
 \subsubsection{Complejidad de la primera etapa}
 
-El algoritmo comienza definiendo el diccionario $T$ con tamaño $|S|+1$ en tiempo $O(|S|)$ (en nuestro código esto se logra implementando el diccionario como un arreglo del tamaño mencionado cuyos índices representan las claves) y el entero $k$.
+El algoritmo comienza definiendo los diccionarios $T$ y $F$ con tamaño $|S|+1$ en tiempo $O(|S|)$ y el entero $k$.
 
-Luego le sigue un ciclo entre las líneas 5-11 (al que llamaremos A), que a su vez contiene otro ciclo
-entre las líneas 6-8 (al que llamaremos B).
+Luego le sigue un ciclo entre las líneas 6-13 (al que llamaremos A), que a su vez contiene otro ciclo
+entre las líneas 7-9 (al que llamaremos B).
 
-El ciclo A itera $|S|-1$ veces y dentro realiza asignaciones $O(1)$, además del ciclo B. Es decir que
+El ciclo A itera $|S|-1$ veces y dentro realiza asignaciones y comparaciones en orden $O(1)$, aparte del ciclo B. Es decir que
 sacando el ciclo B, el ciclo A tiene complejidad $O(|S|)$. Lo que se quiere ver es que el ciclo B tiene
 complejidad $O(|S|)$ en total, es decir, entre todas las iteraciones del ciclo A.
 
@@ -200,21 +233,21 @@ $O($(inicializar el arreglo T) + (trabajo del ciclo A sin contar el ciclo B) + (
 
 \subsubsection{Complejidad total}
 
-En \textit{esSubstring} se comienza concatenando $T$ y $S$ en tiempo $O(|TS|)$ invocando \textit{BordesPropiosDePrefijos} con el string $TS$ como parámetro, lo cual a su vez agrega $O(|TS|)$ como vimos en la sección anterior. Luego, el ciclo que sigue realiza $O(|TS|-2|T|) = O(|S|-|T|) = O(|S|)$ iteraciones (recordemos que por precondición $|T| \leq |S|$), donde en cada iteración se realizan $O(1)$ operaciones. En total, entonces, nuestro algoritmo tiene un tiempo de ejecución de $O(2|TS|) + O(S) = O(|TS|)$. A su vez, $O(|TS|) = O(|T|+|S|) = O(2|S|) = O(|S|)$ ya que $|T| \leq |S|$ por precondición, lo cual cumple la restricción requerida en el enunciado.
+En \textit{esSubstring} se comienza concatenando $T$ y $S$ en tiempo $O(|TS|)$ invocando \textit{BordesPropiosDePrefijosConLongitud} con el string $TS$ y $|T|$ como parámetro. Esta invocación agrega un costo de $O(|TS|)$ como vimos en la sección anterior. Luego, el ciclo que sigue realiza $O(|TS|-2|T|) = O(|S|-|T|) = O(|S|)$ iteraciones (recordemos que por precondición $|T| \leq |S|$), donde en cada iteración se realizan $O(1)$ operaciones. En total, entonces, nuestro algoritmo tiene un tiempo de ejecución de $O(2|TS|) + O(S) = O(|TS|)$. A su vez, $O(|TS|) = O(|T|+|S|) = O(2|S|) = O(|S|)$ ya que $|T| \leq |S|$ por precondición, lo cual cumple la restricción requerida en el enunciado.
 
 \subsection{Casos de prueba}
 
 Utilizamos casos de prueba correspondientes a las siguientes familias:
 \begin{itemize}
-\item el patrón es substring propio del texto
-\item el patrón es prefijo del texto
-\item el patrón es sufijo del texto
-\item el patrón es igual al texto
-\item casos variados de resultado negativo
-\item casos en los que la sucesión de bordes propios de la concatenación del patrón y el texto no es trivial
-\item casos con bordes cruzados del tamaño del patrón
-\item casos en los que la concatenación del patrón y el texto tiene al menos un prefijo que posee tanto un borde de tamaño |T| como de tamaños más grandes (para verificar que el algoritmo registre correctamente la existencia de bordes de tamaño |T| a pesar de haber bordes de tamaño mayor)
-\item casos con la entrada del tamaño máximo sugerido por el enunciado para testear carga
+\item El patrón es substring propio del texto.
+\item El patrón es prefijo del texto.
+\item El patrón es sufijo del texto.
+\item El patrón es igual al texto.
+\item Casos variados de resultado negativo.
+\item Casos en los que la sucesión de bordes propios de la concatenación del patrón y el texto no es trivial.
+\item Casos con bordes cruzados del tamaño del patrón.
+\item Casos en los que la concatenación del patrón y el texto tiene al menos un prefijo que posee tanto un borde de tamaño $|T|$ como de tamaños más grandes (para verificar que el algoritmo registre correctamente la existencia de bordes de tamaño $|T|$ a pesar de haber bordes de tamaño mayor).
+\item Casos con la entrada del tamaño máximo sugerido por el enunciado para testear carga.
 \end{itemize}
 
 
