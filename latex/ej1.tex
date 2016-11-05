@@ -55,7 +55,7 @@ En conclusión, dada una entrada válida $T, S$ del problema planteado en la sec
 
 \subsection{Algoritmo}
 
-Denominamos \textit{esSubstring} al algoritmo que resuelve el problema. El algoritmo consiste en dos etapas. Dado el patrón $T$ y el texto $S$, en la primera etapa se reúne información acerca de las longitudes de los bordes de todos los prefijos de $TS$. Luego, en una segunda instancia, se procesa la información recopilada en la primera etapa para decidir si $T$ es substring de $S$ usando la propiedad enunciada en la sección anterior.
+Denominamos \textit{esSubstring} al algoritmo que resuelve el problema. El algoritmo consiste en dos etapas. Dado el patrón $T$ y el texto $S$, en la primera etapa se reúne información acerca de las longitudes de los bordes de todos los prefijos de $TS$. Luego, en una segunda instancia, se procesa la información recopilada en la primera para decidir si $T$ es substring de $S$ usando la propiedad enunciada en la sección anterior.
 
 \subsubsection{Lema de extensión de bordes}
 
@@ -77,17 +77,20 @@ El elemento $B_r$ en todos los casos será el string vacío, siendo que siempre 
 
 \subsubsection{Lema de bordes anidados}
 
-Sea $S$ un string no vacío con borde $B$ y un string $B'$ tal que $|B'| < |B|$. Entonces, $B'$ es borde de $B$ $\iff$ $B'$ es borde de $S$.
+Sea $S$ un string no vacío con borde $B$ y un string $B'$ tal que $|B'| < |B|$. Entonces
+\[
+	B' \text{ es borde de } B \iff B' \text{ es borde de } S.
+\]
 
 \medskip
 
-$\Longrightarrow) \ $ si $B'$ es borde de $B$, entonces es prefijo de $B$ que a su vez es prefijo de $S$, con lo cual $B'$ es prefijo de $S$. A su vez, $B'$ es sufijo de $B$ que es sufijo de $S$, por lo que $B'$ también es sufijo de $S$. Por definición, al ser $B'$ tanto prefijo como sufijo de $S$, es borde de $S$.
+$\Longrightarrow) \ $ Si $B'$ es borde de $B$, entonces es prefijo de $B$ que a su vez es prefijo de $S$, con lo cual $B'$ es prefijo de $S$. A su vez, $B'$ es sufijo de $B$ que es sufijo de $S$, por lo que $B'$ también es sufijo de $S$. Por definición, al ser $B'$ tanto prefijo como sufijo de $S$, es borde de $S$.
 
 $\Longleftarrow) \ $ Como $B'$ es prefijo de $S$ de longitud menor que $|B|$, entonces es prefijo de $B$ ya que $B$ es prefijo de $S$. A su vez, $B'$ es sufijo de $S$ de longitud menor que $|B|$, por lo que es sufijo de $B$ ya que $B$ es sufijo de $S$. Como $B'$ es, por ende, tanto prefijo como sufijo de $B$, es borde de $B$.
 
 \subsubsection{Primera etapa}
 
-Damos el algoritmo \textit{BordesPropiosDePrefijosConLongitud} que, dado un string no-vacío de entrada $S$ y un natural $m$, devuelve un diccionario que a cada posible longitud de prefijo de $S$ (los $|S|+1$ naturales entre 0 y $|S|$) asocia un booleano que indica si tiene un borde propio de longitud $m$. Dado que todos los prefijos de un string particular pueden identificarse sin ambigüedad por su longitud, este diccionario contiene toda la información necesaria para el procesamiento de la segunda etapa. Notaremos $P_l$ al prefijo de longitud l en el contexto de un string particular. Observemos que nos alcanza con tratar las longitudes de los bordes \textit{propios} de los prefijos ya que nos interesará en particular evaluar bordes no-cruzados, y estos siempre son propios en strings no-vacíos.
+Damos el algoritmo \textit{BordesPropiosDePrefijosConLongitud} que, dado un string no-vacío de entrada $S$ y un natural $m$, devuelve un diccionario que a cada posible longitud de prefijo de $S$ (los $|S|+1$ naturales entre 0 y $|S|$) asocia un booleano que indica si tiene un borde propio de longitud $m$. Dado que todos los prefijos de un string particular pueden identificarse sin ambigüedad por su longitud, este diccionario contiene toda la información necesaria para el procesamiento de la segunda etapa. Notaremos $P_l$ al prefijo de longitud $l$ en el contexto de un string particular. Observemos que nos alcanza con tratar las longitudes de los bordes \textit{propios} de los prefijos ya que nos interesará en particular evaluar bordes no-cruzados, y estos siempre son propios en strings no-vacíos.
 
 \bigskip
 
@@ -147,7 +150,7 @@ Para ver que la forma de iterar la sucesión de bordes propios $A = B_1, \dots, 
 
 \medskip
 
-Para el segundo objetivo, una vez conocida la longitud del mayor borde propio de $P_i$ guardada en la variable $k$ en la línea 10, el algoritmo debe determinar si $P_i$ tiene algún borde propio, no necesariamente el mayor, de longitud exactamente $m$. Si en la iteración $i$ resulta que $k$ es justo $m$, esto es trivialmente cierto y el algoritmo asocia \textit{verdadero} a $F$ en $i$. Si no, entonces revisa si el borde $P_k$ recién calculado de $P_i$ tiene un borde de longitud $m$ consultándolo en $F$, quien tendrá esa información por invariante. Por el lema de bordes anidados, cualquiera sea ese borde de $P_k$, será también borde de $P_i$. Más aún, si $P_k$ no tiene un borde de longitud $m$, por el mismo lema se determina que tampoco lo tiene $P_i$, ya que si lo tuviera, este sería un borde de longitud $m$ de $P_k$ y $F$ en $k$ sería verdadero.
+Para el segundo objetivo, una vez conocida la longitud del mayor borde propio de $P_i$ guardada en la variable $k$ en la línea 10, el algoritmo debe determinar si $P_i$ tiene algún borde propio, no necesariamente el mayor, de longitud exactamente $m$. Si en la iteración $i$ resulta que $k$ es justo $m$, esto es trivialmente cierto y el algoritmo asocia \textit{verdadero} a $F$ en $i$, valor que no se modificará. Si no, revisa si el borde recién encontrado de $P_i$, que es el prefijo $P_k$, tiene un borde de longitud $m$. Esto lo hace consultando el diccionario $F$ en $k$, quien donde se encuentra información por invariante. Por el lema de bordes anidados, cualquiera sea ese borde de longitud $m$ de $P_k$, será también borde de $P_i$. Más aún, si $P_k$ no tiene un borde de longitud $m$, por el mismo lema se determina que tampoco lo tiene $P_i$, ya que si lo tuviera, este sería un borde de longitud $m$ de $P_k$ y $F$ en $k$ sería verdadero.
  
 \subsubsection{Algoritmo final}
 
